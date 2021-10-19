@@ -1,4 +1,4 @@
-from math import comb
+""" from math import comb
 from tkinter import *
 from tkinter.ttk import Combobox  
 
@@ -19,3 +19,4 @@ window.mainloop()
 
 btn = Button(window, )
 
+ """

@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.core.function_base import linspace
 from scipy.integrate import odeint
+from scipy import integrate
 import matplotlib.pyplot as plt
 import math
 
@@ -21,18 +22,7 @@ class zadachi():
         dx_= -a* (u[1]**2) - b * u[0]
         return [du_, dx_] 
 
-
-
-n = 26
-step = 0.01
-x = 0.0
-a = 3
-b = 2
-v = [3.0, 2.0]
-v_ = np.array(v)
-
-
-""" 
+ 
 n = 5
 step = 0.01
 x = 0
@@ -51,6 +41,9 @@ for i in range(1, n+1):
 
 print('___________________________________________')
 
+
+
+
 n = 5
 step = 0.01
 x = 0
@@ -67,11 +60,18 @@ for i in range(1, n+1):
     v = v + step/6 * (k1 + 2*k2 + 2*k3 + k4)
     print(x, '   ', v)
 
-
 print('___________________________________________')
 
- """
 
+
+
+n = 5
+step = 0.01
+x = 0.0
+a = 3
+b = 2
+v = [3.0, 2.0]
+v_ = np.array(v)
 
 for i in range(1, n+1):
     k1 = zadachi.osnovnaya2(x, v_)
@@ -84,9 +84,28 @@ for i in range(1, n+1):
     k4_ = np.array(k3)
 
     x = x + step
-    v__ = v_ + step/6 * (k1_ + 2*k2_ + 2*k3_ + k4_)
-    print(x, '   ', v__[0], '   ', v__[1])
+    v_ = v_ + step/6 * (k1_ + 2*k2_ + 2*k3_ + k4_)
+    print(x, '   ', v_[0], '   ', v_[1])
+    
+print('___________________________________________')
 
-#! У мене в 77 строке число умножается на массив и получается хуета, надо нагуглить (как умножить число на каждый элемент списка, не меняя его)
-#! Я все починил и нашел решение, но есть маленькая проблема, РК4 вообще работает не правильно см. по ссылке
-#* https://stackoverflow.com/questions/50013988/runge-kutta-4-in-python
+
+
+""" 
+n = 5
+step = 0.01
+
+
+def test(x, u):
+    dudx = -1* 3/2 * u
+    return dudx
+
+x = np.linspace(0, 0.05, 6, retstep = 0.01)
+v = 2
+s = integrate.quad(test, v, x)
+
+plt.plot(x, s, 'o-') 
+"""
+
+
+

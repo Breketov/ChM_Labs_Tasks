@@ -36,7 +36,7 @@ class RK4(zadachi):
             x = x + step
             v = v + step/6 * (k1 + 2*k2 + 2*k3 + k4)
             print(x, '   ', v)
-            return v
+        return [x, v] 
 
     def RK4_osnov1(x, v, step, n):
         print(x, '   ', v)
@@ -80,22 +80,26 @@ print(c)
 d = RK4.RK4_osnov1(0, 2, 0.01, 5)
 print(d)
 """
-""" 
-b = RK4.RK4_test(0, 2, 0.01, 5)
- """
 
-def test(x, u):
-    dudx = -1* 3/2 * u
-    return dudx
+b = RK4.RK4_test(0, 2, 0.1, 5)
 
-u0 = 0
-x = np.linspace(0, 0.05, 6)
-u = odeint(test, u0, x)
-u = np.array(u).flatten()
-plt.plot(x, u, 'o-', linewidth = 2.0)
+
+
+
+
+#! Все что находится ниже это полная хуета и работает неккоректно, график кривой не похож на то что я вычислил
+#! Сука
+
+def test_(x_, u_):
+    dudx_ = -1* 3/2 * u_
+    return dudx_
+
+u0 = 2
+x = np.linspace(0, 5, 6)
+u_ = odeint(test_, u0, x)
+u_ = np.array(u_).flatten()
+plt.plot(x, u_, 'o-', linewidth = 2.0)
+""" plt.plot(b[:,0], b[:, 1]) """
 plt.show()
 
 
-RK4.RK4_test
-
-plt.plot()

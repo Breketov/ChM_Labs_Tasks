@@ -1,3 +1,16 @@
+
+
+
+#! Полная хуета которая даже не похожа на интерфейс
+#! Фальшивка, ебана рот
+
+
+
+
+
+
+
+
 from math import comb
 from tkinter import *
 from tkinter.ttk import Combobox  

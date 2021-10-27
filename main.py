@@ -33,7 +33,8 @@ class RK4(zadachi):
         v2 = v
         x_2 = []
         v_2 = []
-        print(x, '   ', v)
+
+        print(x1, '   ', v1)
         for i in range(0, n+1):
             k1 = zadachi.test(x1, v1)
             k2 = zadachi.test(x1 + step / 2, v1 + 0.5 * step * k1)
@@ -45,7 +46,9 @@ class RK4(zadachi):
             x1 = x1 + step
             v1 = v1 + step/6 * (k1 + 2*k2 + 2*k3 + k4)
             print(x1, '   ', v1)
-        for i in range(0, n+1):
+        
+        print(x2, '   ', v2)
+        for i in range(0, 2*(n + 1)):
             k1_2 = zadachi.test(x2, v2)
             k2_2 = zadachi.test(x2 + step / 4, v2 + 0.25 * step * k1_2)
             k3_2 = zadachi.test(x2 + step / 4, v2 + 0.25 * step * k2_2)
@@ -56,50 +59,120 @@ class RK4(zadachi):
             x2 = x2 + step / 2
             v2 = v2 + step/12 * (k1 + 2*k2_2 + 2*k3_2 + k4_2)
             print(x2, '   ', v2)
-        return x_1, v_1, x_2, v_2
+
+        for i in range(0, n+1):
+            v__1 = np.array(v_1)
+            v__2 = np.array(v_2)
+            S = v__1[i] - v__2[2*i]
+
+            print(S)
+        return x_1, v_1, x_2, v_2, S
 
     def RK4_o1(x, v, step, n):
-        x_ = []
-        v_ = []
-        print(x, '   ', v)
+        x1 = x
+        v1 = v
+        x_1 = []
+        v_1 = []
+        x2 = x
+        v2 = v
+        x_2 = []
+        v_2 = []
+
+        print(x1, '   ', v1)
         for i in range(0, n+1):
-            k1 = zadachi.o1(x, v)
-            k2 = zadachi.o1(x + step / 2, v + 0.5 * step * k1)
-            k3 = zadachi.o1(x + step / 2, v + 0.5 * step * k2)
-            k4 = zadachi.o1(x + step, v + step * k3)
+            k1 = zadachi.o1(x1, v1)
+            k2 = zadachi.o1(x1 + step / 2, v1 + 0.5 * step * k1)
+            k3 = zadachi.o1(x1 + step / 2, v1 + 0.5 * step * k2)
+            k4 = zadachi.o1(x1 + step, v1 + step * k3)
+            x_1.append(x1)
+            v_1.append(v1)
 
-            x_.append(x)
-            v_.append(v)
+            x1 = x1 + step
+            v1 = v1 + step/6 * (k1 + 2*k2 + 2*k3 + k4)
+            print(x1, '   ', v1)
 
-            x = x + step
-            v = v + step/6 * (k1 + 2*k2 + 2*k3 + k4)
-            print(x, '   ', v)
-        return x_, v_
+        print(x2, '   ', v2)
+        for i in range(0, 2*(n + 1)):
+            k1_2 = zadachi.o1(x2, v2)
+            k2_2 = zadachi.o1(x2 + step / 4, v2 + 0.25 * step * k1_2)
+            k3_2 = zadachi.o1(x2 + step / 4, v2 + 0.25 * step * k2_2)
+            k4_2 = zadachi.o1(x2 + step / 2, v2 + 0.5 * step * k3_2)
+            x_2.append(x2)
+            v_2.append(v2)
+
+            x2 = x2 + step / 2
+            v2 = v2 + step/12 * (k1 + 2*k2_2 + 2*k3_2 + k4_2)
+            print(x2, '   ', v2)
+
+        for i in range(0, n+1):
+            v__1 = np.array(v_1)
+            v__2 = np.array(v_2)
+            S = v__1[i] - v__2[2*i]
+            
+            print(S)
+        return x_1, v_1, x_2, v_2
 
     def RK4_o2(x, v, step, n):
-        x_ = []
-        v1_ = []
-        v2_ = []
-        print(x, '   ', v)
-        for i in range(1, n+1):
-            v_ = np.array(v)
-            k1 = zadachi.o2(x, v_)
+        x1 = x
+        v1 = v
+        x_1 = []
+        v1_1 = []
+        v2_1 = []
+
+        x2 = x
+        v2 = v
+        x_2 = []
+        v1_2 = []
+        v2_2 = []
+
+        print(x1, '   ', v1[0], '   ', v1[1])
+        for i in range(0, n+1):
+            v_1 = np.array(v1)
+            k1 = zadachi.o2(x1, v_1)
             k1_ = np.array(k1)
-            k2 = zadachi.o2(x + step / 2, v_ + 0.5 * step * k1_)
+            k2 = zadachi.o2(x1 + step / 2, v_1 + 0.5 * step * k1_)
             k2_ = np.array(k2)
-            k3 = zadachi.o2(x + step / 2, v_ + 0.5 * step * k2_)
+            k3 = zadachi.o2(x1 + step / 2, v_1 + 0.5 * step * k2_)
             k3_ = np.array(k3)
-            k4 = zadachi.o2(x + step, v_ + step * k3_)
+            k4 = zadachi.o2(x1 + step, v_1 + step * k3_)
             k4_ = np.array(k4)
+            x_1.append(x1)
+            v1_1.append(v1[0])
+            v2_1.append(v1[1])
 
-            x_.append(x)
-            v1_.append(v[0])
-            v2_.append(v[1])
+            x1 = x1 + step
+            v1 = v_1 + step/6 * (k1_ + 2*k2_ + 2*k3_ + k4_)
+            print(x1, '   ', v1[0], '   ', v1[1])
+        
+        print(x2, '   ', v2[0], '   ', v2[1])
+        for i in range(0, 2*(n + 1)):
+            v_2 = np.array(v2)
+            k1 = zadachi.o2(x2, v_2)
+            k1_ = np.array(k1)
+            k2 = zadachi.o2(x2 + step / 2, v_2 + 0.5 * step * k1_)
+            k2_ = np.array(k2)
+            k3 = zadachi.o2(x2 + step / 2, v_2 + 0.5 * step * k2_)
+            k3_ = np.array(k3)
+            k4 = zadachi.o2(x2 + step, v_2 + step * k3_)
+            k4_ = np.array(k4)
+            x_2.append(x2)
+            v1_2.append(v2[0])
+            v2_2.append(v2[1])
 
-            x = x + step
-            v = v_ + step/6 * (k1_ + 2*k2_ + 2*k3_ + k4_)
-            print(x, '   ', v[0], '   ', v[1])
-        return x_, v1_, v2_
+            x2 = x2 + step
+            v2 = v_2 + step/6 * (k1_ + 2*k2_ + 2*k3_ + k4_)
+            print(x1, '   ', v2[0], '   ', v2[1])
+
+        for i in range(0, n+1):
+            v1__1 = np.array(v1_1)
+            v1__2 = np.array(v1_2)
+            v2__1 = np.array(v2_1)
+            v2__2 = np.array(v2_2)
+            S1 = v1__1[i] - v1__2[2*i]
+            S2 = v2__1[i] - v2__2[2*i]
+            
+            print(S1, '   ', S2)
+        return x_1, v1_1, v2_1, x_2, v1_2, v2_2, S1, S2
 
 a = 3
 b = 2

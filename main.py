@@ -2,11 +2,13 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
+#* Здесm всякие параметры, которые будут потом браться из интерфейса
 granitsa = 10
 epsilon = 0.001
 a = 3
 b = 2
 
+#* Здесь описаны задачи
 def test(x, u):
    dudx = -1* 3/2 * u
    return dudx
@@ -20,7 +22,7 @@ def O2(x, u):
    dx_= -a* (u[1]**2) - b * u[0]
    return du_, dx_ 
 
-
+#* Здесь описаны РК4 для каждой задачи
 def RK4_test(x, v, step, n):
    h = step
    i = 1
@@ -64,17 +66,21 @@ def RK4_test(x, v, step, n):
       S_ = v2 - v1
       e_ = (S_/31) * 32
 
-      if((epsilon/32) <= abs(S[i]) and abs(S[i]) <= epsilon):
+      if((epsilon/32) <= abs(S_) and abs(S_) <= epsilon):
          e.append(e_)
          S.append(S_)
          h_.append(h)
+         x_1.append(x1)
+         v_1.append(v1)
 
          h = h
          i = i + 1
-      elif(abs(S[i]) <= (epsilon/32)):
+      elif(abs(S_) <= (epsilon/32)):
          e.append(e_)
          S.append(S_)
          h_.append(h)
+         x_1.append(x1)
+         v_1.append(v1)
 
          h = 2*h
          i = i + 1
@@ -123,8 +129,6 @@ def RK4_O1(x, v, step, n):
 
       x1 = x1 + h
       v1 = v1 + h/6 * (k1_1 + 2*k2_1 + 2*k3_1 + k4_1)
-      x_1.append(x1)
-      v_1.append(v1)
       
       j = i - 1
       while j < i + 1:
@@ -141,17 +145,21 @@ def RK4_O1(x, v, step, n):
 
       S_ = v2 - v1
       e_ = (S_/31) * 32
-      if((epsilon/32) <= abs(S[i]) and abs(S[i]) <= epsilon):
+      if((epsilon/32) <= abs(S_) and abs(S_) <= epsilon):
          e.append(e_)
          S.append(S_)
          h_.append(h)
+         x_1.append(x1)
+         v_1.append(v1)
 
          h = h
          i = i + 1
-      elif(abs(S[i]) <= (epsilon/32)):
+      elif(abs(S_) <= (epsilon/32)):
          e.append(e_)
          S.append(S_)
          h_.append(h)
+         x_1.append(x1)
+         v_1.append(v1)
 
          h = 2*h
          i = i + 1
@@ -215,7 +223,7 @@ def RK4_O2(x, v, step, n):
       x_1.append(x1)
       v1_1.append(v1[0])
       v2_1.append(v1[1])
-
+      
       j = i - 1
       while j < i + 1:
          v2_ = np.array(v2)
@@ -245,7 +253,8 @@ def RK4_O2(x, v, step, n):
          e2.append(e2_)
          S1.append(S_1)
          S2.append(S_2)
-         
+         h_.append(h)
+
          h = h
          i = i + 1
       elif((abs(S_1) <= (epsilon/32)) and (abs(S_2) <= (epsilon/32))):
@@ -253,7 +262,8 @@ def RK4_O2(x, v, step, n):
          e2.append(e2_)
          S1.append(S_1)
          S2.append(S_2)
-
+         h_.append(h)
+         
          h = 2*h
          i = i + 1
       else:
@@ -267,7 +277,7 @@ def RK4_O2(x, v, step, n):
          v1_2.pop(-1)
          v2_2.pop(-1)
          x2 = x_2[-1]
-         v2 = [v1_2[-1], v2_2]
+         v2 = [v1_2[-1], v2_2[-1]]
 
          h = h/2
          i = i - 1
@@ -277,10 +287,10 @@ def RK4_O2(x, v, step, n):
          break
    return x_1, v1_1, v2_1, v1_2, v2_2, S1, S2, e1, e2, h_
 
+
 """ test = RK4_test(0, 2, 0.1, 5) """
 
-o2 = RK4_O2(0, [2, 3], 0.001, 5)
-
+o2 = RK4_O2(0, [2, 3], 0.01, 5)
 
 """ 
 u0 = 2

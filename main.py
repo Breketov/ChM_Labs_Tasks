@@ -2,11 +2,22 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
-#* Здесm всякие параметры, которые будут потом браться из интерфейса
-granitsa = 10
+#* Здесь всякие параметры, которые будут потом браться из интерфейса
+B = 10
 epsilon = 0.001
+epsilon_gr = 0.001
 a = 3
 b = 2
+
+#* Здесь описан критерий выхода на правую границу
+def control_gran(B, epsilon_gr, x):
+   x_ = x
+   B_ = B
+   epsilon_gr_ = epsilon_gr
+   if((B_ - epsilon_gr_ <= x_) and (x_ <= B_)):
+      return True
+   else:
+      return False
 
 #* Здесь описаны задачи
 def test(x, u):
@@ -98,8 +109,8 @@ def RK4_test(x, v, step, n):
          h = h/2
          i = i - 1
          j = j - 1
-   
-      if((granitsa - epsilon <= x1) and (x1 <= granitsa)):
+
+      if (control_gran(B, epsilon_gr, x1) == True):
          break
    return x_1, v_1, v_2, S, e, h_
 
@@ -178,7 +189,7 @@ def RK4_O1(x, v, step, n):
          i = i - 1
          j = j - 1
 
-      if((granitsa - epsilon <= x1) and (x1 <= granitsa)):
+      if (control_gran(B, epsilon_gr, x1) == True):
          break
    return x_1, v_1, v_2, S, e, h_
 
@@ -283,32 +294,115 @@ def RK4_O2(x, v, step, n):
          i = i - 1
          j = j - 1
 
-      if((granitsa - epsilon <= x1) and (x1 <= granitsa)):
+      if (control_gran(B, epsilon_gr, x1) == True):
          break
    return x_1, v1_1, v2_1, v1_2, v2_2, S1, S2, e1, e2, h_
 
+""" g = RK4_test(12, 3, 3, 12) """
 
-""" test = RK4_test(0, 2, 0.1, 5) """
 
-o2 = RK4_O2(0, [2, 3], 0.01, 5)
+def ClearPlot():
+   fig = plt.figure()
+   plt.figure().clear()
+   plt.close()
+   plt.cla()
+   plt.clf() 
+
 
 """ 
-u0 = 2
-x = np.linspace(0, 0.05, 6)
-i = 0
-u_test = []
-while i < len(x):
-   u_ = u0 * math.exp(-3/2 * x[i])
-   u_test.append(u_)
-   i = i + 1
-
-
-e = RK4.RK4_test(0, 2, 0.01, 6)
-e_x = e[0]
-e_v = e[1]
-
-plt.plot(e_x, e_v, 'r--', linewidth = 0.5)
-plt.plot(x, u_test, 'b--', linewidth = 0.5)
-plt.axis([0, 0.05, 0, 2])
-plt.show() 
+zadacha_test = RK4_test(x0, v0, h, Nmax)
+zadacha_test_x = zadacha_test[0]
+zadacha_test_v1 = zadacha_test[1]
+zadacha_test_v2 = zadacha_test[2]
+zadacha_test_S = zadacha_test[3]
+zadacha_test_e = zadacha_test[4]
+zadacha_test_h = zadacha_test[5] 
 """
+
+
+def Plot_test(x0, u0, v0, h, n):
+   tt = test_true(x0, u0, h, n)
+   tt_x = tt[0]
+   tt_u = tt[1]
+
+   tf = RK4_test(x0, v0, h, n)
+   tf_x = tf[0]
+   tf_v = tf[1]
+
+   plt.plot(tt_x, tt_u, 'o-', linewidth = 2.0, label = 'u(x)')
+   plt.plot(tf_x, tf_v, 'o-', linewidth = 2.0, label = 'v(x)')
+   plt.xlabel('x')
+   plt.ylabel('u(x)   v(x)')
+   plt.legend()
+   plt.grid()
+   plt.savefig('Plot_test.png', bbox_inches='tight')
+   ClearPlot()
+
+
+def Plot_O1(x0, v0, h, n):
+   o1 = RK4_O1(x0, v0, h, n)
+   o1_x = o1[0]
+   o1_v = o1[1]
+
+   plt.plot(o1_x, o1_v, 'o-', linewidth = 2.0, label = 'v(x)')
+   plt.xlabel('x')
+   plt.ylabel('v(x)')
+   plt.legend()
+   plt.grid()
+   plt.savefig('Plot_o2.png', bbox_inches='tight')
+   ClearPlot()
+
+
+def Plot_O2_graf(x0, v0, h, n):
+   o2 = RK4_O2(x0, v0, h, n)
+   o2_x = o2[0]
+   o2_v1 = o2[1]
+   o2_v2 = o2[3]
+
+   plt.plot(o2_x, o2_v1, 'o-', linewidth = 2.0, label = 'v1(x)')
+   plt.plot(o2_x, o2_v2, 'o-', linewidth = 2.0, label = 'v2(x)')
+   plt.xlabel('x')
+   plt.ylabel('v1(x)    v2(x)')
+   plt.legend()
+   plt.grid()
+   plt.savefig('Plot_o2_graf.png', bbox_inches='tight')
+   ClearPlot()
+
+
+def Plot_o2_phase(x0, v0, h, n):
+   o2 = RK4_O2(x0, v0, h, n)
+   o2_v1 = o2[1]
+   o2_v2 = o2[3]
+
+   plt.plot(o2_v1, o2_v2, 'o-', linewidth = 2.0, label = 'v(x)')
+   plt.xlabel('x')
+   plt.ylabel('v(x)')
+   plt.legend()
+   plt.grid()
+   plt.savefig('Plot_o2_phase.png', bbox_inches='tight')
+   ClearPlot()
+
+
+asf = Plot_O1(0, 2, 0.01, 5)
+
+
+
+
+
+
+
+
+
+
+
+def test_true(x0, u0, h, n):
+   x = x0
+   u = u0
+   x = np.linspace(x0, n + 1, h)
+   i  = 0
+   u_ = []
+   while i < len(x):
+      u = u0 * math.exp(-3/2 * x[i])
+      u_.append(u)
+      i = i + 1
+   return x, u_ 

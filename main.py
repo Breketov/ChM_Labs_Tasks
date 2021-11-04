@@ -4,17 +4,16 @@ import numpy as np
 from prettytable import PrettyTable
 
 #* Здесь решение тестовой задачи
-def test_true(x0, u0, h, Nmax):
+def test_true(x0, u0, x_last):
    x = x0
    u = u0
-   x = np.linspace(x0, Nmax)
    i  = 0
    u_ = []
-   while i < len(x):
-      u = u0 * math.exp(-3/2 * x[i])
+   while i < len(x_last):
+      u = u0 * math.exp(-3/2 * x_last[i])
       u_.append(u)
       i = i + 1
-   return x, u_ 
+   return x_last, u_ 
 
 #* Здесь описаны задачи
 def test(x, u):
@@ -46,7 +45,7 @@ def RK4_test_O1(x0, v0, h, Nmax):
    h_ = [h]
    n_ = [0]
    olp_ = [0]
-   S_ = []
+   S_ = [0]
    C1 = 0
    C2 = 0
    
@@ -109,7 +108,7 @@ def RK4_test_O1(x0, v0, h, Nmax):
             C1 = 0
             C2 = 0
             i = i + 1
-         if((granitsa - epsilon_gr <= v1) and (v1 <= granitsa)):
+         if((granitsa - epsilon_gr <= x1) and (x1 <= granitsa)):
             break
    elif (zadacha == 1):
       while i < Nmax + 1:
@@ -170,7 +169,7 @@ def RK4_test_O1(x0, v0, h, Nmax):
             C1 = 0
             C2 = 0
             i = i + 1
-         if((granitsa - epsilon_gr <= v1) and (v1 <= granitsa)):
+         if((granitsa - epsilon_gr <= x1) and (x1 <= granitsa)):
             break
    return n_, h_, x_1, v_1, v_2, olp_, C1, C2, S_
 
@@ -280,59 +279,9 @@ def RK4_O2(x0, v0, h, Nmax):
          C1 = 0
          C2 = 0
          i = i + 1
-      if((granitsa - epsilon_gr <= v1) and (v1 <= granitsa)):
+      if((granitsa - epsilon_gr <= x1) and (x1 <= granitsa)):
             break
-   return x_1, v1_1, v2_1, v1_2, v2_2, S1, S2, olp1, olp2, h_, C1, C2
-
-#* Здесь графики для каждой задачи
-def Plot_test_O1(x0, u0, v0, h, n):
-   if (zadacha == 0):
-      tt = test_true(x0, u0, h, n)
-      tt_x = tt[0]
-      tt_u = tt[1]
-
-      tf = RK4_test_O1(x0, v0, h, n)
-      tf_x = tf[2]
-      tf_v = tf[3]
-
-      plt.plot(tt_x, tt_u, 'o-', linewidth = 2.0, label = 'u(x)')
-      plt.plot(tf_x, tf_v, 'o-', linewidth = 2.0, label = 'v(x)')
-      plt.xlabel('x')
-      plt.ylabel('u(x)   v(x)')
-      plt.legend()
-      plt.grid()
-      plt.show()
-   elif (zadacha == 1):
-      tf = RK4_test_O1(x0, v0, h, n)
-      tf_x = tf[2]
-      tf_v = tf[3]
-      plt.plot(tf_x, tf_v, 'o-', linewidth = 2.0, label = 'v(x)')
-      plt.xlabel('x')
-      plt.ylabel('u(x)   v(x)')
-      plt.legend()
-      plt.grid()
-      plt.show()
-
-def Plot_O2(x0, v0, h, n):
-   o2 = RK4_O2(x0, v0, h, n)
-   o2_x = o2[0]
-   o2_v1 = o2[1]
-   o2_v2 = o2[2]
-
-   plt.plot(o2_x, o2_v1, 'o-', linewidth = 2.0, label = 'v1(x)')
-   plt.plot(o2_x, o2_v2, 'o-', linewidth = 2.0, label = 'v2(x)')
-   plt.xlabel('x')
-   plt.ylabel('v1(x)    v2(x)')
-   plt.legend()
-   plt.grid()
-   plt.show()
-
-   plt.plot(o2_v1, o2_v2, 'o-', linewidth = 2.0, label = 'v(x)')
-   plt.xlabel('x')
-   plt.ylabel('v(x)')
-   plt.legend()
-   plt.grid()
-   plt.show()
+   return x_1, v1_1, v2_1, v1_2, v2_2, S1, S2, olp1, olp2, h_, C1, C2, n_
 
 #Терминал
 print('_______________________________________________________________________________________________')
@@ -353,7 +302,7 @@ elif (zadacha == 1):
    u0 = float(input('u0 = '))
 elif (zadacha == 2):
    print('Введите начальные Основной №2 задачи:')
-   x0_O2 = float(input('x0 = '))
+   x0 = float(input('x0 = '))
    u0 = float(input('u0 = '))
    u0_ = float(input("u'0 = "))
    u0_02 = [u0, u0_]
@@ -361,7 +310,7 @@ elif (zadacha == 2):
    a = float(input('a = '))
    b = float(input('b = '))
 print('Задайте правую границу:')
-granitsa = float(input('epsilon = '))
+granitsa = float(input('X = '))
 print('Задайте точность выхода на правую границу:')
 epsilon_gr = float(input('epsilon = '))
 print('Задайте максимальное число шагов:')
@@ -389,6 +338,18 @@ if (zadacha == 0):
    C1 = test[6]
    C2 = test[7]
    S = test[8]
+
+   tt = test_true(x0, u0, x_1)
+   tt_x = tt[0]
+   tt_u = tt[1]
+
+   plt.plot(tt_x, tt_u, 'o-', linewidth = 2.0, label = 'u(x)')
+   plt.plot(x_1, v_1, 'o-', linewidth = 2.0, label = 'v(x)')
+   plt.xlabel('x')
+   plt.ylabel('u(x)   v(x)')
+   plt.legend()
+   plt.grid()
+   plt.show()
 elif (zadacha == 1):
    Osnov1 = RK4_test_O1(x0, u0, h, Nmax)
    n = Osnov1[0]
@@ -400,8 +361,15 @@ elif (zadacha == 1):
    C1 = Osnov1[6]
    C2 = Osnov1[7]
    S = Osnov1[8]
+
+   plt.plot(x_1, v_1, 'o-', linewidth = 2.0, label = 'v(x)')
+   plt.xlabel('x')
+   plt.ylabel('v(x)')
+   plt.legend()
+   plt.grid()
+   plt.show()
 elif (zadacha == 2):
-   Osnov2 = RK4_O2(x0, u0, h, Nmax)
+   Osnov2 = RK4_O2(x0, u0_02, h, Nmax)
    x_1 = Osnov2[0]
    v1_1 = Osnov2[1]
    v2_1 = Osnov2[2]
@@ -414,6 +382,21 @@ elif (zadacha == 2):
    h = Osnov2[9]
    C1 = Osnov2[10]
    C2 = Osnov2[11]
+   n = Osnov2[12]
+   plt.plot(x_1, v1_1, 'o-', linewidth = 2.0, label = 'v1(x)')
+   plt.plot(x_1, v2_1, 'o-', linewidth = 2.0, label = 'v2(x)')
+   plt.xlabel('x')
+   plt.ylabel('v1(x)    v2(x)')
+   plt.legend()
+   plt.grid()
+   plt.show()
+
+   plt.plot(v1_1, v2_1, 'o-', linewidth = 2.0, label = 'v(x)')
+   plt.xlabel('x')
+   plt.ylabel('v(x)')
+   plt.legend()
+   plt.grid()
+   plt.show()
 
 #* Здесь находятся значения для справки
 if ((zadacha == 0) or (zadacha == 1)):
@@ -435,7 +418,7 @@ if ((zadacha == 0) or (zadacha == 1)):
    min_h = min(h)
    k_min_h = h.index(min_h)
    x_min_h = x_1[k_min_h]
-elif (zadacha == 0):
+elif (zadacha == 2):
    abs_olp_1 = []
    abs_olp_2 = []
    for i in range(1, len(olp1)):
@@ -485,35 +468,38 @@ elif (contr_loc_ == 0):
    print('Контроль локальной погрешности отключен')
 print(' ')
 print('Результаты расчета:')
-if (n[-1] < Nmax):
-   print('Число шагов  = ', len(n) - 1)
-   if ((zadacha == 0) or (zadacha == 1)):
-      print('Выход к границе заданной точности  = ', granitsa - x_1[-1])
-      print('Текущий x = ', x_1[-1], '  ', 'Текущий v = ', v_1[-1])
-      print('Максимальная контрольная величина: ', max_S/16, '  ', 'при x = ', x_max_S)
-      print('Минимальная контрольная величина: ', min_S/16, '  ', 'при x = ', x_min_S)
-   elif(zadacha == 2):
-      print('Выход к границе заданной точности по п  = ', granitsa - x_1[-1])
-      print('Текущий x = ', x_1[-1], '  ', 'Текущий v = ({v1_1[-1]} , {v2_2[-1]}) ')
-      print('Максимальная контрольная величина по первой компоненте v: ', max_S_1/16, '  ', 'при x = ', x_max_S_1)
-      print('Минимальная контрольная величина по первой компоненте v: ', min_S_1/16, '  ', 'при x = ', x_min_S_1)
-      print('Максимальная контрольная величина по второй компоненте v: ', max_S_2/16, '  ', 'при x = ', x_max_S_2)
-      print('Минимальная контрольная величина по второй компоненте v: ', min_S_2/16, '  ', 'при x = ', x_min_S_2)
-print('Число увеличений шага: ', C1)
-print('Число уменьшений шага: ', C2)
-print('Максимальный шаг: ', max_h, '  ', 'при x = ', x_max_h)
-print('Минимальный шаг: ', min_h, '  ', 'при x = ', x_min_h)
+print('Число шагов  = ', len(n) - 1)
+if ((zadacha == 0) or (zadacha == 1)):
+   print('Выход к границе заданной точности  = ', granitsa - x_1[-1])
+   print('Текущий x = ', x_1[-1], '  ', 'Текущий v = ', v_1[-1])
+   print('Максимальная контрольная величина: ', max_S/16, '  ', 'при x = ', x_max_S)
+   print('Минимальная контрольная величина: ', min_S/16, '  ', 'при x = ', x_min_S)
+   print('Число увеличений шага: ', C1)
+   print('Число уменьшений шага: ', C2)
+   print('Максимальный шаг: ', max_h, '  ', 'при x = ', x_max_h)
+   print('Минимальный шаг: ', min_h, '  ', 'при x = ', x_min_h)
+elif(zadacha == 2):
+   print('Выход к границе заданной точности по п  = ', granitsa - x_1[-1])
+   print('Текущий x = ', x_1[-1], '  ', 'Текущий v = ({v1_1[-1]} , {v2_2[-1]}) ')
+   print('Максимальная контрольная величина по первой компоненте v: ', max_S_1/16, '  ', 'при x = ', x_max_S_1)
+   print('Минимальная контрольная величина по первой компоненте v: ', min_S_1/16, '  ', 'при x = ', x_min_S_1)
+   print('Максимальная контрольная величина по второй компоненте v: ', max_S_2/16, '  ', 'при x = ', x_max_S_2)
+   print('Минимальная контрольная величина по второй компоненте v: ', min_S_2/16, '  ', 'при x = ', x_min_S_2)
+   print('Число увеличений шага: ', C1)
+   print('Число уменьшений шага: ', C2)
+   print('Максимальный шаг: ', max_h, '  ', 'при x = ', x_max_h)
+   print('Минимальный шаг: ', min_h, '  ', 'при x = ', x_min_h)
 print('_____________________________________________________________________________________________________________________')
 
 #* Таблица
 if (zadacha == 0):
    S_ = np.array(S)
    S_ = S_*15
-   plot_test = Plot_test_O1(x0, u0, u0, h, Nmax)
-   u = plot_test[1]
+   u = np.array(tt_u)
+   v_array = np.array(v_1)
    E = []
    for i in range(0, len(v_1)):
-      E_ = u[i] - v_1[i]
+      E_ = u[i] - v_array[i]
       E_ = abs(E_)
       E.append(E_)
    table = PrettyTable()

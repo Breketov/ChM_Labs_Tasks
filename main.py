@@ -111,8 +111,12 @@ def RK4_test_O1(x0, v0, h, Nmax):
             C1 = 0
             C2 = 0
             i = i + 1
-         if((granitsa - epsilon_gr <= v1) and (v1 <= granitsa)):
-            break
+         if ((v0 >= granitsa)):
+            if((v1 <= granitsa + epsilon_gr) and (granitsa <= v1)):
+               break
+         else:
+            if((granitsa - epsilon_gr <= v1) and (v1 <= granitsa)):
+               break
    elif (zadacha == 1):
       while i < Nmax + 1:
          k1_1 = O1(x1, v1)
@@ -172,8 +176,12 @@ def RK4_test_O1(x0, v0, h, Nmax):
             C1 = 0
             C2 = 0
             i = i + 1
-         if((granitsa - epsilon_gr <= v1) and (v1 <= granitsa)):
-            break
+         if ((v0 >= granitsa)):
+            if((v1 <= granitsa + epsilon_gr) and (granitsa <= v1)):
+               break
+         else:
+            if((granitsa - epsilon_gr <= v1) and (v1 <= granitsa)):
+               break
    return n_, h_, x_1, v_1, v_2, olp_, C1, C2, S_
 
 def RK4_O2(x0, v0, h, Nmax):
@@ -282,7 +290,11 @@ def RK4_O2(x0, v0, h, Nmax):
          C1 = 0
          C2 = 0
          i = i + 1
-      if((granitsa - epsilon_gr <= v1) and (v1 <= granitsa)):
+      if ((v0 >= granitsa)):
+         if((v1 <= granitsa + epsilon_gr) and (granitsa <= v1)):
+            break
+      else:
+         if((granitsa - epsilon_gr <= v1) and (v1 <= granitsa)):
             break
    return x_1, v1_1, v2_1, v1_2, v2_2, S1, S2, olp1, olp2, h_, C1, C2, n_
 

@@ -325,9 +325,9 @@ elif (zadacha == 2):
    print('Параметры a и b;')
    a = float(input('a = '))
    b = float(input('b = '))
-print('Задайте правую границу:')
+print('Задайте границу:')
 granitsa = float(input('V = '))
-print('Задайте точность выхода на правую границу:')
+print('Задайте точность выхода на границу:')
 epsilon_gr = float(input('epsilon = '))
 print('Задайте максимальное число шагов:')
 Nmax = int(input('Nmax = '))
@@ -419,21 +419,20 @@ elif (zadacha == 2):
 #* Здесь находятся значения для справки
 if ((zadacha == 0) or (zadacha == 1)):
    abs_olp_ = []
-   for i in range(1, len(olp)):
+   for i in range(0, len(olp)):
       abs_olp = abs(olp[i])
       abs_olp_.append(abs_olp)
-   max_S = max(abs_olp_)
-   k_max_S = abs_olp_.index(max_S) + 1
+   max_S = max(abs_olp_[1:])
+   k_max_S = abs_olp_.index(max_S)
    x_max_S = x_1[k_max_S]
-   min_S = min(abs_olp_)
-   k_min_S = abs_olp_.index(min_S) + 1
+   min_S = min(abs_olp_[1:])
+   k_min_S = abs_olp_.index(min_S)
    x_min_S = x_1[k_min_S]
-   min_S = min(abs_olp_)
 
-   max_h = max(h)
+   max_h = max(h[1:])
    k_max_h = h.index(max_h)
    x_max_h = x_1[k_max_h]
-   min_h = min(h)
+   min_h = min(h[1:])
    k_min_h = h.index(min_h)
    x_min_h = x_1[k_min_h]
 
@@ -442,29 +441,29 @@ if ((zadacha == 0) or (zadacha == 1)):
 elif (zadacha == 2):
    abs_olp_1 = []
    abs_olp_2 = []
-   for i in range(1, len(olp1)):
+   for i in range(0, len(olp1)):
       abs_olp1 = abs(olp1[i])
       abs_olp_1.append(abs_olp1)
       abs_olp2 = abs(olp2[i])
       abs_olp_2.append(abs_olp2)
-   max_S_1 = max(abs_olp_1)
-   k_max_S_1 = abs_olp_1.index(max_S_1) + 1
+   max_S_1 = max(abs_olp_1[1:])
+   k_max_S_1 = abs_olp_1.index(max_S_1)
    x_max_S_1 = x_1[k_max_S_1]
-   min_S_1 = min(abs_olp_1)
-   k_min_S_1 = abs_olp_1.index(min_S_1) + 1
+   min_S_1 = min(abs_olp_1[1:])
+   k_min_S_1 = abs_olp_1.index(min_S_1)
    x_min_S_1 = x_1[k_min_S_1]
 
-   max_S_2 = max(abs_olp_2)
-   k_max_S_2 = abs_olp_2.index(max_S_2) + 1
+   max_S_2 = max(abs_olp_2[1:])
+   k_max_S_2 = abs_olp_2.index(max_S_2)
    x_max_S_2 = x_1[k_max_S_2]
-   min_S_2 = min(abs_olp_2)
-   k_min_S_2 = abs_olp_2.index(min_S_2) + 1
+   min_S_2 = min(abs_olp_2[1:])
+   k_min_S_2 = abs_olp_2.index(min_S_2)
    x_min_S_2 = x_1[k_min_S_2]
 
-   max_h = max(h)
+   max_h = max(h[1:])
    k_max_h = h.index(max_h)
    x_max_h = x_1[k_max_h]
-   min_h = min(h)
+   min_h = min(h[1:])
    k_min_h = h.index(min_h)
    x_min_h = x_1[k_min_h]
 
@@ -570,4 +569,3 @@ elif (zadacha == 2):
    table.add_column("OLP2", olp2)
    table.add_column("h", h)
    print(table)
-

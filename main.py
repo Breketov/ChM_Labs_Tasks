@@ -111,12 +111,8 @@ def RK4_test_O1(x0, v0, h, Nmax):
             C1 = 0
             C2 = 0
             i = i + 1
-         if ((v0 >= granitsa)):
-            if((v1 <= granitsa + epsilon_gr) and (granitsa <= v1)):
-               break
-         else:
-            if((granitsa - epsilon_gr <= v1) and (v1 <= granitsa)):
-               break
+         if((granitsa - epsilon_gr <= x1) and (x1 <= granitsa)):
+            break
    elif (zadacha == 1):
       while i < Nmax + 1:
          k1_1 = O1(x1, v1)
@@ -176,12 +172,8 @@ def RK4_test_O1(x0, v0, h, Nmax):
             C1 = 0
             C2 = 0
             i = i + 1
-         if ((v0 >= granitsa)):
-            if((v1 <= granitsa + epsilon_gr) and (granitsa <= v1)):
-               break
-         else:
-            if((granitsa - epsilon_gr <= v1) and (v1 <= granitsa)):
-               break
+         if((granitsa - epsilon_gr <= x1) and (x1 <= granitsa)):
+            break
    return n_, h_, x_1, v_1, v_2, olp_, C1, C2, S_
 
 def RK4_O2(x0, v0, h, Nmax):
@@ -191,7 +183,7 @@ def RK4_O2(x0, v0, h, Nmax):
    x2 = x0
    v2 = v0
 
-   h_ = [h]
+   h_ = [0]
    n_ = [0]
    S1 = [0]
    S2 = [0]
@@ -274,6 +266,18 @@ def RK4_O2(x0, v0, h, Nmax):
             v2_2.pop(-1)
             x2 = x_2[-1]
             v2 = [v1_2[-1], v2_2[-1]]
+            olp1.append(olp_1)
+            olp2.append(olp_2)
+            S1.append(S_1)
+            S2.append(S_2)
+            x_1.append(x1)
+            v1_1.append(v1[0])
+            v2_1.append(v1[1])
+            x_2.append(x2)
+            v1_2.append(v2[0])
+            v2_2.append(v2[1])
+            h_.append(h)
+            n_.append(i)
             C2 = C2 + 1
             h = h/2
             i = i + 1
@@ -290,12 +294,8 @@ def RK4_O2(x0, v0, h, Nmax):
          C1 = 0
          C2 = 0
          i = i + 1
-      if ((v0 >= granitsa)):
-         if((v1 <= granitsa + epsilon_gr) and (granitsa <= v1)):
-            break
-      else:
-         if((granitsa - epsilon_gr <= v1) and (v1 <= granitsa)):
-            break
+      if((granitsa - epsilon_gr <= x1) and (x1 <= granitsa)):
+         break
    return x_1, v1_1, v2_1, v1_2, v2_2, S1, S2, olp1, olp2, h_, C1, C2, n_
 
 #____________________________________________________________________________________________________________________________
@@ -325,8 +325,8 @@ elif (zadacha == 2):
    print('Параметры a и b;')
    a = float(input('a = '))
    b = float(input('b = '))
-print('Задайте границу:')
-granitsa = float(input('V = '))
+print('Задайте правую границу по x:')
+granitsa = float(input('x = '))
 print('Задайте точность выхода на границу:')
 epsilon_gr = float(input('epsilon = '))
 print('Задайте максимальное число шагов:')
@@ -436,8 +436,6 @@ if ((zadacha == 0) or (zadacha == 1)):
    k_min_h = h.index(min_h)
    x_min_h = x_1[k_min_h]
 
-   for i in range(0, len(x_1)):
-      x_1[i] = round(x_1[i], 13)
 elif (zadacha == 2):
    abs_olp_1 = []
    abs_olp_2 = []
@@ -467,8 +465,8 @@ elif (zadacha == 2):
    k_min_h = h.index(min_h)
    x_min_h = x_1[k_min_h]
 
-   for i in range(0, len(x_1)):
-      x_1[i] = round(x_1[i], 13)
+for i in range(0, len(x_1)):
+   x_1[i] = round(x_1[i], 11)
 
 
 #____________________________________________________________________________________________________________________________
@@ -489,12 +487,12 @@ if (contr_loc_ == 1):
    print('Контроль локальной погрешности включен')
    print('Контроль локальной погрешности = ', epsilon)    
 elif (contr_loc_ == 0):
-   print('Контроль локальной погрешности отключен')
+   print('Контроль локальной vпогрешности отключен')
 print(' ')
 print('Результаты расчета:')
 print('Число шагов  = ', len(n) - 1)
 if ((zadacha == 0) or (zadacha == 1)):
-   print('Выход к границе заданной точности  = ', granitsa - x_1[-1])
+   print('Выход к границе заданной точности  = ', granitsa - v_1[-1])
    print('Текущий x = ', x_1[-1], '  ', 'Текущий v = ', v_1[-1])
    print('Максимальная контрольная величина: ', max_S/16, '  ', 'при x = ', x_max_S)
    print('Минимальная контрольная величина: ', min_S/16, '  ', 'при x = ', x_min_S)
@@ -503,7 +501,7 @@ if ((zadacha == 0) or (zadacha == 1)):
    print('Максимальный шаг: ', max_h, '  ', 'при x = ', x_max_h)
    print('Минимальный шаг: ', min_h, '  ', 'при x = ', x_min_h)
 elif(zadacha == 2):
-   print('Выход к границе заданной точности по п  = ', granitsa - x_1[-1])
+   print('Выход к границе заданной точности  = ', granitsa - x_1[-1])
    print('Текущий x = ', x_1[-1], '  ', 'Текущий v = ({v1_1[-1]} , {v2_2[-1]}) ')
    print('Максимальная контрольная величина по первой компоненте v: ', max_S_1/16, '  ', 'при x = ', x_max_S_1)
    print('Минимальная контрольная величина по первой компоненте v: ', min_S_1/16, '  ', 'при x = ', x_min_S_1)
@@ -563,8 +561,8 @@ elif (zadacha == 2):
    table.add_column("v2_1", v2_1)
    table.add_column("v1_2", v1_2)
    table.add_column("v2_2", v2_2)
-   table.add_column("v2-v1", S_1)
-   table.add_column("v2-v1", S_2)
+   """ table.add_column("v2-v1", S_1)
+   table.add_column("v2-v1", S_2) """
    table.add_column("OLP1", olp1)
    table.add_column("OLP2", olp2)
    table.add_column("h", h)

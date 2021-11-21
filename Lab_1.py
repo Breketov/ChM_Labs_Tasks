@@ -265,15 +265,15 @@ if (zadacha == 0):
    v_1 = np.array(v_1)
    e = u - v_1
    e = np.abs(e)
-   table = {'n': n, 'h': h, 'x_1': x1, 'v_1': v1, 'v_2': v2, 'S': S, 'ОЛП': olp, 'u': u, '|u-v|': e}
+   table = {'n': n, 'h': h, 'x': x1, 'v_1': v1, 'v_2': v2, 'S': S, 'ОЛП': olp, 'u': u, '|u-v|': e}
    data = pd.DataFrame(data = table)
    data.to_csv("table_lab_1.csv", index=False)
 elif (zadacha == 1):
-   table = {'n': n, 'h': h, 'x_1': x1, 'v_1': v1, 'v_2': v2, 'S': S, 'ОЛП': olp}
+   table = {'n': n, 'h': h, 'x': x1, 'v_1': v1, 'v_2': v2, 'S': S, 'ОЛП': olp}
    data = pd.DataFrame(data = table)
    data.to_csv("table_lab_1.csv", index=False)
 elif (zadacha == 2):
-   table = {'n': n, 'h': h, 'x_1': x1, 'v_1': v1, 'v_2': v2, 'S': S, 'ОЛП': olp}
+   table = {'n': n, 'h': h, 'x': x1, 'v_1': v1, 'v_2': v2, 'S': S, 'ОЛП': olp}
    data = pd.DataFrame(data = table)
    data.to_csv("table_lab_1.csv", index=False)
 plot()

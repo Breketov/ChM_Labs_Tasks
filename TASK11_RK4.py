@@ -225,7 +225,7 @@ elif (contr_loc_ == 0):
 print('_______________________________________________________________________________________________')
 
 #* Вывод
-table = {'n': n, 'h': h, 'x_1': x1, 'v_1': v1, 'v_2': v2, 'ОЛП': olp}
+table = {'n': n, 'h': h, 'x': x1, 'v_1': v1, 'v_2': v2, 'ОЛП': olp}
 data = pd.DataFrame(data = table)
 data.to_csv("Таблица_Зачада_11.csv", index=False)
 plot()

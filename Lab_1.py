@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-#________________________________________________________________________________
+
 #* Всякие задачи
 def test_true(x, u0):
    x = np.array(x)
@@ -60,14 +60,14 @@ def plot():
       plt.ylabel('u(x)    v(x)')
       plt.legend()
       plt.grid()
-      plt.show()
+      plt.savefig('График_Тестовая.png', bbox_inches='tight')
    elif (zadacha == 1):
       plt.plot(x1, v1, 'o-', label = 'Численная траектория')
       plt.xlabel('x')
       plt.ylabel('v(x)')
       plt.legend()
       plt.grid()
-      plt.show()
+      plt.savefig('График_Основная_1.png', bbox_inches='tight')
    elif (zadacha == 2):
       x_1, v1_1, v2_1 = phas_graf(x0, vect, h0, Nmax)
       plt.plot(x1, v1_1, 'o-', label = 'Численная траектория по v[1]')
@@ -76,16 +76,15 @@ def plot():
       plt.ylabel('v(x)')
       plt.legend()
       plt.grid()
-      plt.show()
+      plt.savefig('График_Основная_2.png', bbox_inches='tight')
 
       plt.plot(v1_1, v2_1, 'o-', label = 'Фазовый портрет')
       plt.xlabel('v[1]')
       plt.ylabel('v([2]')
       plt.legend()
       plt.grid()
-      plt.show()
+      plt.savefig('График_Фазовый_Основная_2.png', bbox_inches='tight')
  
-#________________________________________________________________________________
 #* Всякий функционал
 def record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i):
    olp.append(olp_)
@@ -129,7 +128,6 @@ def func_border(x1):
    else: 
       return 1
 
-#________________________________________________________________________________
 #* Рунге-Кутта
 def RK4(x0, v0, h0, Nmax):
    i = 1
@@ -163,7 +161,6 @@ def RK4(x0, v0, h0, Nmax):
          break
    return n, h, x_1, v_1, v_2, S, olp, C1, C2
 
-#____________________________________________________________________________________________________________________________
 #* Терминал
 print('_____________________________________________________________________________________________________________________')
 print('Команда Эльвина | Лабораторная работа №1 | Численное решение задачи Коши для ОДУ')
@@ -207,13 +204,13 @@ if ((contr_loc_str == 'да') or (contr_loc_str == 'Да')):
 elif ((contr_loc_str == 'нет') or (contr_loc_str == 'Нет')):
    contr_loc_ = 0
 
-#____________________________________________________________________________________________________________________________
 #* Результат работы РК4 и функционала
 #n, h, x_1, v_1, v_2, S, olp, C1, C2
 n, h, x1, v1, v2, S, olp, C1, C2 = RK4(x0, u0, h0, Nmax)
 
-#____________________________________________________________________________________________________________________________
 #* Здесь считаются некоторые значения для справки
+for i in range(0, len(x1)):
+   x1[i] = round(x1[i], 11)
 abs_olp = []
 for i in range(0, len(olp)):
    abs_olp_ = abs(olp[i])
@@ -232,10 +229,6 @@ min_h = min(h[1:])
 k_min_h = h.index(min_h)
 x_min_h = x1[k_min_h]
 
-for i in range(0, len(x1)):
-   x1[i] = round(x1[i], 11)
-
-#____________________________________________________________________________________________________________________________
 print('_______________________________________________________Справка_______________________________________________________')
 if (zadacha == 0):
    print('Тип задачи: Тестовая')
@@ -266,7 +259,6 @@ print('Максимальный шаг: ', max_h, '  ', 'при x = ', x_max_h)
 print('Минимальный шаг: ', min_h, '  ', 'при x = ', x_min_h)
 print('_____________________________________________________________________________________________________________________')
 
-#____________________________________________________________________________________________________________________________
 #* Вывод данных
 if (zadacha == 0):
    x, u = test_true(x_1, u0)
@@ -275,15 +267,13 @@ if (zadacha == 0):
    e = np.abs(e)
    table = {'n': n, 'h': h, 'x_1': x1, 'v_1': v1, 'v_2': v2, 'S': S, 'ОЛП': olp, 'u': u, '|u-v|': e}
    data = pd.DataFrame(data = table)
-   data.to_csv("table.csv", index=False)
-
+   data.to_csv("table_lab_1.csv", index=False)
 elif (zadacha == 1):
    table = {'n': n, 'h': h, 'x_1': x1, 'v_1': v1, 'v_2': v2, 'S': S, 'ОЛП': olp}
    data = pd.DataFrame(data = table)
-   data.to_csv("table.csv", index=False)
-
+   data.to_csv("table_lab_1.csv", index=False)
 elif (zadacha == 2):
    table = {'n': n, 'h': h, 'x_1': x1, 'v_1': v1, 'v_2': v2, 'S': S, 'ОЛП': olp}
    data = pd.DataFrame(data = table)
-   data.to_csv("table.csv", index=False)
+   data.to_csv("table_lab_1.csv", index=False)
 plot()

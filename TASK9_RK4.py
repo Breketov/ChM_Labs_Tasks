@@ -1,41 +1,28 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from prettytable import PrettyTable
-
-# _________________________________________________________________
-# Обозначения
-# a - вводится с клавиатуры 
-# theta(0) - вводится с клавиатуры 
-# x0, u0 - начальные условия вводится с клавиатуры 
-# _________________________________________________________________
-# h0 = 0.0001 - начальный шаг
-# Nmax > 100000 - максимальное число шагов
-# epsilon_gr = 0.5 * 10**(-6)
-# epsilon - вводится с клавиатуры - для контроля ЛП сверху
-# epsilon_min - для контроля ЛП снизу, вычисляется из epsilon
-# _________________________________________________________________
+import pandas as pd
 
 def task(x, u):
-   dudx = -1 * a * (u - theta)  
+   dudx = -1 * a * (u - theta)
    return dudx
 
+#* Рунге-Кутта
 def RK4(x0, v0, h, Nmax):
    i = 1
-   x1 = x0                #с обычным шагом
-   v1 = v0                #с обычным шагом
-   x2 = x0                #с половинным шагом
-   v2 = v0                #с половинным шагом
-                   
-   olp_ = [0]             #мн-во, содержащее все значения ОЛП на каждом шаге
-   h_ = [0]               #мн-во, содержащее все значения шагов
-   x_1 = [x0]               
+   x1 = x0
+   v1 = v0
+   x2 = x0
+   v2 = v0
+   olp_ = [0]
+   h_ = [0]
+   x_1 = [x0]
    v_1 = [v0]
    n_ = [0]
    x_2 = [x0]
    v_2 = [v0]
    
-   C1 = 0                 #счетчик удвоения шага
-   C2 = 0                 #счетчик деления шага
+   C1 = 0
+   C2 = 0
    while i < Nmax + 1:
       k1_1 = task(x1, v1)
       k2_1 = task(x1 + h / 2, v1 + h / 2 * k1_1)
@@ -43,23 +30,19 @@ def RK4(x0, v0, h, Nmax):
       k4_1 = task(x1 + h, v1 + h * k3_1)
       x1 = x1 + h
       v1 = v1 + h / 6 * (k1_1 + 2*k2_1+ 2*k3_1 + k4_1)
-
       j = i - 1
       while j < i + 1:
          k1_2 = task(x2, v2)
          k2_2 = task(x2 + h/4, v2 + 0.25 * h * k1_2)
          k3_2 = task(x2 + h/4, v2 + 0.25 * h * k2_2)
          k4_2 = task(x2 + h/2, v2 + 0.5 * h * k3_2)
-
          x2 = x2 + h/2
          v2 = v2 + h/12 * (k1_2 + 2*k2_2 + 2*k3_2 + k4_2)
          j = j + 1
       x_2.append(x2)
       v_2.append(v2)
-
-      S = (v2 - v1)/15             #контрольная величина
-      olp = S*16                   #оценка ЛП
-
+      S = (v2 - v1)/15
+      olp = S*16
       if (contr_loc_ == 1):
          if((epsilon/32) <= abs(S) <= epsilon):
             olp_.append(olp)
@@ -67,8 +50,7 @@ def RK4(x0, v0, h, Nmax):
             x_1.append(x1)
             v_1.append(v1)
             n_.append(i)
-
-            h = h                     #шаг не изменяется
+            h = h
             i = i + 1
          elif(abs(S) <= (epsilon/32)):
             olp_.append(olp)
@@ -76,7 +58,6 @@ def RK4(x0, v0, h, Nmax):
             x_1.append(x1)
             v_1.append(v1)
             n_.append(i)
-
             C1 = C1 + 1
             h = 2*h
             i = i + 1
@@ -92,31 +73,27 @@ def RK4(x0, v0, h, Nmax):
             x_2.append(x2)
             v_2.append(v2)
             n_.append(i)
-            
             C2 = C2 + 1
             h = h/2
             i = i + 1
-      
       else:
          olp_.append(olp)
          x_1.append(x1)
          v_1.append(v1)
          h_.append(h)
          n_.append(i)
-
          C1 = 0
          C2 = 0
          i = i + 1
-
       if((v0 >= theta)):
          if((v1 <= theta + epsilon_gr) and (theta <= v1)):
             break
       else:    
-         if((theta - epsilon_gr <= v1) and (v1 <= theta)):              #If we when out of the border
+         if((theta - epsilon_gr <= v1) and (v1 <= theta)):
             break
    return n_, h_, x_1, v_1, v_2, olp_, C1, C2
 
-#Here we start the terminal
+#* Терминал
 print('_______________________________________________________________________________________________')
 print('Вивас Каролина | Команда Эльвина | Задача №9')
 print('Вариант 7')
@@ -146,19 +123,12 @@ Nmax = float(input('Nmax = '))
 print('Задайте начальный шаг:')
 h = float(input('h = '))
 
+#* Тут считается РК
 # n_, h_, x_1, v_1, v_2, olp_, C1, C2 
-test = RK4(x0, u0, h, Nmax)
-n = test[0]
-h = test[1]
-x_1 = test[2]
-v_1 = test[3]
-v_2 = test[4]
-olp = test[5]
-C1 = test[6]
-C2 = test[7]
+n, h, x_1, v_1, v_2, olp, C1, C2  = RK4(x0, u0, h, Nmax)
 
 for i in range(0, len(x_1)):
-   x_1[i] = round(x_1[i], 13)
+   x_1[i] = round(x_1[i], 11)
 abs_olp_ = []
 for i in range(0, len(olp)):
    abs_olp = abs(olp[i])
@@ -177,7 +147,7 @@ min_h = min(h[1:])
 k_min_h = h.index(min_h)
 x_min_h = x_1[k_min_h]
 
-#Справка
+#* Справка
 print('_______________________________________Справка_________________________________________________')
 print('№ Варианта задания: 7')
 print('Тип задачи: Основная')
@@ -209,20 +179,14 @@ elif (contr_loc_ == 0):
    print('Шаг не менялся h = ', max_h)
 print('_______________________________________________________________________________________________')
 
-# Table
-table = PrettyTable()
-table.add_column("n", n)
-table.add_column("h", h)
-table.add_column("x", x_1)
-table.add_column("v1", v_1)
-table.add_column("v2", v_2)
-table.add_column("OLP", olp)
-print(table)
+#* Вывод
+table = {'n': n, 'h': h, 'x_1': x_1, 'v_1': v_1, 'v_2': v_2, 'ОЛП': olp}
+data = pd.DataFrame(data = table)
+data.to_csv("Таблица_Зачада_9.csv", index=False)
 
-#График
 plt.plot(x_1, v_1,'o-', linewidth = 2.0, label='График изменения температуры от времени')
 plt.legend()
-plt.xlabel('time')
-plt.ylabel("temperature")
+plt.xlabel('t')
+plt.ylabel("°C")
 plt.grid()
-plt.show()
+plt.savefig('График_Задача_9.png', bbox_inches='tight')

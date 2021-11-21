@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-from prettytable import PrettyTable
+import pandas as pd
 
 def test_true(x, u0):
    x = np.array(x)
@@ -14,7 +14,7 @@ def tasks(x, u):
    elif (zadacha == 1):
       return 1/((1+(x**2))**(1/3))*(u**2) + u - (u**3)*math.sin(10*x)
    elif (zadacha == 2):
-      d2udx2 = a*(dudx**2) + b*(u)
+      d2udx2 = -a*(dudx**2) - b*(u)
       return d2udx2
 
 def znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i):
@@ -28,6 +28,7 @@ def znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i):
          x_1.append(x1)
          v_1.append(v1)
          n.append(i)
+         
          h0 = h0
       elif(abs(S_) <= (epsilon/32)):
          olp.append(olp_)
@@ -100,6 +101,7 @@ def RK4(x0, v0, h0, Nmax):
       i = i + 1
       if (func_border(x1) == True):
          break
+   
    return n, h, x_1, v_1, v_2, S, olp, C1, C2
 #____________________________________________________________________________________________________________________________
 #Терминал
@@ -189,7 +191,7 @@ if (contr_loc_ == 1):
    print('Контроль локальной погрешности включен')
    print('Контроль локальной погрешности = ', epsilon)    
 elif (contr_loc_ == 0):
-   print('Контроль локальной vпогрешности отключен')
+   print('Контроль локальной погрешности отключен')
 print(' ')
 print('Результаты расчета:')
 print('Число шагов  = ', len(n) - 1)
@@ -205,7 +207,11 @@ print('_________________________________________________________________________
 
 #____________________________________________________________________________________________________________________________
 #* Таблица
-if (zadacha == 0):
+table = {'n': n, 'h': h, 'x_1': x_1, 'v_1': v_1, 'v_2': v_2, 'S': S, 'olp': olp}
+data = pd.DataFrame(data = table)
+data.to_csv("table.csv", index=False, )
+
+if (zadacha == 4):
    """u = np.array(tt_u)
    v_array = np.array(v_1)
    E = []
@@ -225,7 +231,7 @@ if (zadacha == 0):
    table.add_column("|u - v|", E)"""
    print(table)
 
-elif (zadacha == 1):
+elif (zadacha == 4):
    table = PrettyTable()
    table.add_column("n", n)
    table.add_column("x", x_1)
@@ -236,7 +242,7 @@ elif (zadacha == 1):
    table.add_column("h", h)
    print(table)
 
-elif (zadacha == 2):
+elif (zadacha == 4):
    table = PrettyTable()
    table.add_column("n", n)
    table.add_column("x", x_1)

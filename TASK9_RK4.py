@@ -86,11 +86,25 @@ def RK4(x0, v0, h, Nmax):
          C2 = 0
          i = i + 1
       if((v0 >= theta)):
-         if((v1 <= theta + epsilon_gr) and (theta <= v1)):
+         if(v1 <= theta + epsilon_gr):
             break
+         if (theta <= v1):
+            olp_.pop(-1)
+            h_.pop(-1)
+            x_1.pop(-1)
+            v_1.pop(-1)
+            v_2.pop(-1)
+            n_.pop(-1)
       else:    
-         if((theta - epsilon_gr <= v1) and (v1 <= theta)):
+         if((theta - epsilon_gr <= v1)):
             break
+         if (theta >= v1):
+            olp.pop(-1)
+            h_.pop(-1)
+            x_1.pop(-1)
+            v_1.pop(-1)
+            v_2.pop(-1)
+            n_.pop(-1)
    return n_, h_, x_1, v_1, v_2, olp_, C1, C2
 
 #* Терминал

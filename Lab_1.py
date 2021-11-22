@@ -16,40 +16,9 @@ def tasks(x, u):
    elif (zadacha == 1):
       return 1/((1+(x**2))**(1/3))*(u**2) + u - (u**3)*math.sin(10*x)
    elif (zadacha == 2):
-      d2udx2 = -a*(dudx**2) - b*(u)
-      return d2udx2
-
-def system(x0, u):
-   du_ = u[1]
-   dx_= -a* (u[1]**2) - b * u[0]
-   return du_, dx_ 
-
-#* Тут считаются точки фазового портрета для Основной №2
-def phas_graf_RK4(x0, v0, h0, Nmax):
-   i = 1
-   x1 = x0
-   v1 = v0
-   x_1 = [x1]
-   v1_ = np.array(v1)
-   v1_1 = [v1_[0]]
-   v2_1 = [v1_[1]]
-
-   while i < Nmax + 1:
-      k1_1 = system(x1, v1_)
-      k1_1 = np.array(k1_1)
-      k2_1 = system(x1 + h0/2, v1_ + 0.5 * h0 * k1_1)
-      k2_1 = np.array(k2_1)
-      k3_1 = system(x1 + h0/2, v1_ + 0.5 * h0 * k2_1)
-      k3_1 = np.array(k3_1)
-      k4_1 = system(x1 + h0, v1_ + h0 * k3_1)
-      k4_1 = np.array(k4_1)
-      x1 = x1 + h0
-      v1_ = v1_ + h0/6 * (k1_1 + 2*k2_1 + 2*k3_1 + k4_1)
-      x_1.append(x1)
-      v1_1.append(v1_[0])
-      v2_1.append(v1_[1])
-      i = i + 1
-   return x_1, v1_1, v2_1
+      du = u[1]
+      dx = -a* (u[1]**2) - b * u[0]
+      return np.array([du, dx])
 
 #* Тут рисуются граифики 
 def plot():
@@ -69,21 +38,22 @@ def plot():
       plt.grid()
       plt.savefig('График_Основная_1.png', bbox_inches='tight')
    elif (zadacha == 2):
-      x_1, v1_1, v2_1 = phas_graf(x0, vect, h0, Nmax)
-      plt.plot(x1, v1_1, 'o-', label = 'Численная траектория по v[1]')
-      plt.plot(x1, v2_1, 'x-', label = 'Численная траектория по v[2]')
+      plt.plot(x1, v1[:, 0], 'o-', label = 'Численная траектория по v[1]')
+      plt.plot(x1, v1[:, 1], 'x-', label = 'Численная траектория по v[2]')
       plt.xlabel('x')
       plt.ylabel('v(x)')
       plt.legend()
       plt.grid()
       plt.savefig('График_Основная_2.png', bbox_inches='tight')
+      plt.show()
 
-      plt.plot(v1_1, v2_1, 'o-', label = 'Фазовый портрет')
+      plt.plot(v1[:, 0], v1[:, 1], 'o-', label = 'Фазовый портрет')
       plt.xlabel('v[1]')
-      plt.ylabel('v([2]')
+      plt.ylabel('v[2]')
       plt.legend()
       plt.grid()
       plt.savefig('График_Фазовый_Основная_2.png', bbox_inches='tight')
+      plt.show()
  
 #* Всякий функционал
 def record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i):
@@ -99,23 +69,42 @@ def znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i):
    S_ = (v2 - v1)/15
    olp_ = S_*16
    if (contr_loc_ == 1):
-      if((epsilon/32) <= abs(S_) <= epsilon):
-         h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
-         h0 = h0
-      elif(abs(S_) <= (epsilon/32)):
-         h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
-         C1 = C1 + 1
-         h0 = 2*h0
-      else:
-         x_2.pop(-1)
-         v_2.pop(-1)
-         x2 = x_2[-1]
-         v2 = v_2[-1]
-         h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
-         x_2.append(x2)
-         v_2.append(v2)
-         C2 = C2 + 1
-         h0 = h0/2
+      if ((zadacha == 0) or (zadacha == 1)):
+         if((epsilon/32) <= abs(S_) <= epsilon):
+            h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
+            h0 = h0
+         elif(abs(S_) <= (epsilon/32)):
+            h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
+            C1 = C1 + 1
+            h0 = 2*h0
+         else:
+            x_2.pop(-1)
+            v_2.pop(-1)
+            x2 = x_2[-1]
+            v2 = v_2[-1]
+            h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
+            x_2.append(x2)
+            v_2.append(v2)
+            C2 = C2 + 1
+            h0 = h0/2
+      elif (zadacha == 2):
+         if(((epsilon/32) <= abs(S_[0]) <= epsilon) and ((epsilon/32) <= abs(S_[1]) <= epsilon)):
+            h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
+            h0 = h0
+         elif((abs(S_[0]) <= (epsilon/32)) and (abs(S_[1]) <= (epsilon/32))):
+            h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
+            C1 = C1 + 1
+            h0 = 2*h0
+         else:
+            x_2.pop(-1)
+            v_2.pop(-1)
+            x2 = x_2[-1]
+            v2 = v_2[-1]
+            h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
+            x_2.append(x2)
+            v_2.append(v2)
+            C2 = C2 + 1
+            h0 = h0/2
    else:
       h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
       C1 = 0
@@ -123,20 +112,28 @@ def znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i):
    return x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2
 
 def func_border(x1):
-   if (((border - epsilon_gr <= x1) and (x1 <= border)) or (x1 >= border)):
+   if ((border - epsilon_gr <= x1) and (x1 <= border)):
       return 0
-   else: 
+   elif (x1 >= border):
       return 1
+   else: 
+      return 2
 
 #* Рунге-Кутта
 def RK4(x0, v0, h0, Nmax):
    i = 1
    x1, x2 = x0, x0
-   x_1, x_2 = [x0], [x0]
-   v1, v2 = v0, v0
-   v_1, v_2 = [v0], [v0]
-   h, n, olp, S = [0], [0], [0], [0]
+   x_1, x_2 = [x1], [x2]
    C1, C2 = 0, 0
+   if (zadacha == 0 or zadacha == 1):
+      v1, v2 = v0, v0
+      v_1, v_2 = [v1], [v2]
+      h, n, olp, S = [0], [0], [0], [0]
+   elif (zadacha == 2):
+      v1, v2 = np.array(v0), np.array(v0)
+      v_1, v_2 = [v1], [v2]
+      olp, S = [np.array([0, 0])], [np.array([0, 0])]
+      h, n = [0], [0]
    while i < Nmax + 1:
       k1_1 = tasks(x1, v1)
       k2_1 = tasks(x1 + h0/2, v1 + 0.5 * h0 * k1_1)
@@ -157,7 +154,17 @@ def RK4(x0, v0, h0, Nmax):
       v_2.append(v2)
       x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2 = znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i)
       i = i + 1
-      if (func_border(x1) == 0):
+      z = func_border(x1)
+      if (z == 0):
+         break
+      elif (z == 1):
+         olp.pop(-1)
+         S.pop(-1)
+         h.pop(-1)
+         x_1.pop(-1)
+         v_1.pop(-1)
+         v_2.pop(-1)
+         n.pop(-1)
          break
    return n, h, x_1, v_1, v_2, S, olp, C1, C2
 
@@ -181,9 +188,9 @@ elif (zadacha == 1):
 elif (zadacha == 2):
    print('Введите начальные условия для Основной №2 задачи:')
    x0 = float(input('x0 = '))
-   u0 = float(input('u0 = '))
-   dudx = float(input("u'0 = "))
-   vect = [u0, dudx]
+   u0_1 = float(input('u0 = '))
+   u0_2 = float(input("u'0 = "))
+   u0 = [u0_1, u0_2]
    print('Параметры a и b;')
    a = float(input('a = '))
    b = float(input('b = '))
@@ -208,19 +215,38 @@ elif ((contr_loc_str == 'нет') or (contr_loc_str == 'Нет')):
 #n, h, x_1, v_1, v_2, S, olp, C1, C2
 n, h, x1, v1, v2, S, olp, C1, C2 = RK4(x0, u0, h0, Nmax)
 
-#* Здесь считаются некоторые значения для справки
+#* Тут всякое для справки
 for i in range(0, len(x1)):
    x1[i] = round(x1[i], 11)
-abs_olp = []
-for i in range(0, len(olp)):
-   abs_olp_ = abs(olp[i])
-   abs_olp.append(abs_olp_)
-max_S = max(abs_olp[1:])
-k_max_S = abs_olp.index(max_S)
-x_max_S = x1[k_max_S]
-min_S = min(abs_olp[1:])
-k_min_S = abs_olp.index(min_S)
-x_min_S = x1[k_min_S]
+abs_olp = np.abs(olp)
+if (zadacha == 0 or zadacha == 1):
+   max_S = max(abs_olp[1:])
+   k_max_S = abs_olp.index(max_S)
+   x_max_S = x1[k_max_S]
+   min_S = min(abs_olp[1:])
+   k_min_S = abs_olp.index(min_S)
+   x_min_S = x1[k_min_S]
+elif (zadacha == 2):
+   abs_olp1 = abs_olp[:, 0]
+   abs_olp1 = abs_olp1.tolist()
+   max_S_1 = max(abs_olp1[1:])
+   k_max_S_1 = abs_olp1.index(max_S_1)
+   x_max_S_1 = x1[k_max_S_1]
+   min_S_1 = min(abs_olp1[1:])
+   k_min_S_1 = abs_olp1.index(min_S_1)
+   x_min_S_1 = x1[k_min_S_1]
+   abs_olp2 = abs_olp[:, 1]
+   abs_olp2 = abs_olp2.tolist()
+   max_S_2 = max(abs_olp2[1:])
+   k_max_S_2 = abs_olp2.index(max_S_2)
+   x_max_S_2 = x1[k_max_S_2]
+   min_S_2 = min(abs_olp2[1:])
+   k_min_S_2 = abs_olp2.index(min_S_2)
+   x_min_S_2 = x1[k_min_S_2]
+
+   v1 = np.array(v1)
+   v2 = np.array(v2)
+   S = np.array(S)
 
 max_h = max(h[1:])
 k_max_h = h.index(max_h)
@@ -228,6 +254,7 @@ x_max_h = x1[k_max_h]
 min_h = min(h[1:])
 k_min_h = h.index(min_h)
 x_min_h = x1[k_min_h]
+
 
 print('_______________________________________________________Справка_______________________________________________________')
 if (zadacha == 0):
@@ -251,8 +278,14 @@ print('Результаты расчета:')
 print('Число шагов  = ', len(n) - 1)
 print('Выход к границе заданной точности  = ', border - x1[-1])
 print('Текущий x = ', x1[-1], '  ', 'Текущий v = ', v1[-1])
-print('Максимальная контрольная величина: ', max_S/16, '  ', 'при x = ', x_max_S)
-print('Минимальная контрольная величина: ', min_S/16, '  ', 'при x = ', x_min_S)
+if (zadacha == 0 or zadacha == 1): 
+   print('Максимальная контрольная величина: ', max_S/16, '  ', 'при x = ', x_max_S)
+   print('Минимальная контрольная величина: ', min_S/16, '  ', 'при x = ', x_min_S)
+elif (zadacha == 2):
+   print('Максимальная контрольная величина по длинне: ', max_S_1/16, '  ', 'при x = ', x_max_S_1)
+   print('Минимальная контрольная величина по длинне: ', min_S_1/16, '  ', 'при x = ', x_min_S_1)
+   print('Максимальная контрольная величина по скорости: ', max_S_2/16, '  ', 'при x = ', x_max_S_2)
+   print('Минимальная контрольная величина по скорости: ', min_S_2/16, '  ', 'при x = ', x_min_S_2)
 print('Число увеличений шага: ', C1)
 print('Число уменьшений шага: ', C2)
 print('Максимальный шаг: ', max_h, '  ', 'при x = ', x_max_h)
@@ -273,7 +306,7 @@ elif (zadacha == 1):
    data = pd.DataFrame(data = table)
    data.to_csv("table_lab_1.csv", index=False)
 elif (zadacha == 2):
-   table = {'n': n, 'h': h, 'x': x1, 'v_1': v1, 'v_2': v2, 'S': S, 'ОЛП': olp}
+   table = {'n': n, 'h': h, 'x': x1, 'v[1]_1': v1[:, 0], 'v[2]_1': v1[:, 1], 'v[1]_2': v2[:, 0], 'v[2]_2': v2[:, 1], 'S[1]': S[: ,0], 'S[2]': S[:, 1], 'ОЛП[1]': abs_olp1, 'ОЛП[2]': abs_olp2}
    data = pd.DataFrame(data = table)
    data.to_csv("table_lab_1.csv", index=False)
 plot()

@@ -1,3 +1,4 @@
+from math import sqrt
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -37,13 +38,14 @@ def record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i):
 
 def znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i):
    S_ = (v2 - v1)/15
-   olp_ = S_*16
+   S_norm = sqrt((S_[0]**2) + (S_[1]**2))
+   olp_ = S_norm*16
    if (contr_loc_ == 1):
-      if(((epsilon/32) <= abs(S_[0]) <= epsilon) and ((epsilon/32) <= abs(S_[1]) <= epsilon)):
+      if((epsilon/32) <= abs(S_norm) <= epsilon):
          h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
          h0 = h0
          i = i + 1
-      elif((abs(S_[0]) <= (epsilon/32)) and (abs(S_[1]) <= (epsilon/32))):
+      elif(abs(S_norm) <= (epsilon/32)):
          h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
          C1 = C1 + 1
          h0 = 2*h0
@@ -79,7 +81,7 @@ def RK4(x0, v0, h0, Nmax):
    x_1, x_2 = [x0], [x0]
    v1, v2 = np.array(v0), np.array(v0)
    v_1, v_2 = [v1], [v2]
-   olp, S = [np.array([0, 0])], [np.array([0, 0])]
+   olp, S = [0], [0]
    h, n = [0], [0]
    C1, C2 = 0, 0
    while i < Nmax + 1:
@@ -101,7 +103,7 @@ def RK4(x0, v0, h0, Nmax):
       x_2.append(x2)
       v_2.append(v2)
       x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i = znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i)
-      i = i + 1
+
       z = func_border(x1)
       if (z == 0):
          break
@@ -157,23 +159,16 @@ n, h, x1, v1, v2, olp, C1, C2 = RK4(x0, u0_2, h0, Nmax)
 
 for i in range(0, len(x1)):
    x1[i] = round(x1[i], 11)
-abs_olp = np.abs(olp)
-abs_olp1 = abs_olp[:, 0]
-abs_olp1 = abs_olp1.tolist()
-max_S_1 = max(abs_olp1[1:])
-k_max_S_1 = abs_olp1.index(max_S_1)
-x_max_S_1 = x1[k_max_S_1]
-min_S_1 = min(abs_olp1[1:])
-k_min_S_1 = abs_olp1.index(min_S_1)
-x_min_S_1 = x1[k_min_S_1]
-abs_olp2 = abs_olp[:, 1]
-abs_olp2 = abs_olp2.tolist()
-max_S_2 = max(abs_olp2[1:])
-k_max_S_2 = abs_olp2.index(max_S_2)
-x_max_S_2 = x1[k_max_S_2]
-min_S_2 = min(abs_olp2[1:])
-k_min_S_2 = abs_olp2.index(min_S_2)
-x_min_S_2 = x1[k_min_S_2]
+abs_olp_ = []
+for i in range(0, len(olp)):
+   abs_olp = abs(olp[i])
+   abs_olp_.append(abs_olp)
+max_S = max(abs_olp_[1:])
+k_max_S = abs_olp_.index(max_S)
+x_max_S = x1[k_max_S]
+min_S = min(abs_olp_[1:])
+k_min_S = abs_olp_.index(min_S)
+x_min_S = x1[k_min_S]
 
 v1 = np.array(v1)
 v2 = np.array(v2)
@@ -205,10 +200,8 @@ print('Результаты расчета:')
 print('Число шагов  = ', len(n) - 1)
 print('Выход к границе заданной точности  = ', border - x1[-1])
 print('Текущее время = ', x1[-1], '  ', 'Текущее отклонение = ', v1[-1],)
-print('Максимальная контрольная величина по длинне: ', max_S_1/16, '  ', 'при x = ', x_max_S_1)
-print('Минимальная контрольная величина по длинне: ', min_S_1/16, '  ', 'при x = ', x_min_S_1)
-print('Максимальная контрольная величина по скорости: ', max_S_2/16, '  ', 'при x = ', x_max_S_2)
-print('Минимальная контрольная величина по скорости: ', min_S_2/16, '  ', 'при x = ', x_min_S_2)
+print('Максимальная контрольная величина по длинне: ', max_S/16, '  ', 'при x = ', x_max_S)
+print('Минимальная контрольная величина по длинне: ', min_S/16, '  ', 'при x = ', x_min_S)
 if (contr_loc_ == 1):
    print('Число увеличений шага: ', C1)
    print('Число уменьшений шага: ', C2)
@@ -220,7 +213,7 @@ elif (contr_loc_ == 0):
 print('_______________________________________________________________________________________________')
 
 #* Вывод
-table = {'n': n, 'h': h, 'x': x1, 'v[1]_1': v1[:, 0], 'v[2]_1': v1[:, 1], 'v[1]_2': v2[:, 0], 'v[2]_2': v2[:, 1], 'ОЛП[1]': abs_olp1, 'ОЛП[2]': abs_olp2}
+table = {'n': n, 'h': h, 'x': x1, 'v[1]_1': v1[:, 0], 'v[2]_1': v1[:, 1], 'v[1]_2': v2[:, 0], 'v[2]_2': v2[:, 1], 'ОЛП': abs_olp_}
 data = pd.DataFrame(data = table)
 data.to_csv("Таблица_Зачада_11.csv", index=False)
 plot()

@@ -1,4 +1,4 @@
-import math
+from math import sqrt
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -56,9 +56,9 @@ def plot():
       plt.show()
  
 #* Всякий функционал
-def record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i):
+def record(x1, v1, h, h0, n, olp_, S_norm, olp, S, x_1, v_1, i):
    olp.append(olp_)
-   S.append(S_)
+   S.append(S_norm)
    h.append(h0)
    x_1.append(x1)
    v_1.append(v1)
@@ -67,48 +67,29 @@ def record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i):
 
 def znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i):
    S_ = (v2 - v1)/15
-   olp_ = S_*16
+   S_norm = sqrt((S_[0]**2) + (S_[1]**2))
+   olp_ = S_norm*16
    if (contr_loc_ == 1):
-      if ((zadacha == 0) or (zadacha == 1)):
-         if((epsilon/32) <= abs(S_) <= epsilon):
-            h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
-            h0 = h0
-            i = i + 1
-         elif(abs(S_) <= (epsilon/32)):
-            h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
-            C1 = C1 + 1
-            h0 = 2*h0
-            i = i + 1
-         else:
-            x1 = x_1[-1]
-            v1 = v_1[-1]
-            x_2.pop(-1)
-            v_2.pop(-1)
-            x2 = x_2[-1]
-            v2 = v_2[-1]
-            C2 = C2 + 1
-            h0 = h0/2
-      elif (zadacha == 2):
-         if(((epsilon/32) <= abs(S_[0]) <= epsilon) and ((epsilon/32) <= abs(S_[1]) <= epsilon)):
-            h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
-            h0 = h0
-            i = i + 1
-         elif((abs(S_[0]) <= (epsilon/32)) and (abs(S_[1]) <= (epsilon/32))):
-            h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
-            C1 = C1 + 1
-            h0 = 2*h0
-            i = i + 1
-         else:
-            x1 = x_1[-1]
-            v1 = v_1[-1]
-            x_2.pop(-1)
-            v_2.pop(-1)
-            x2 = x_2[-1]
-            v2 = v_2[-1]
-            C2 = C2 + 1
-            h0 = h0/2
+      if((epsilon/32) <= abs(S_norm) <= epsilon):
+         h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_norm, olp, S, x_1, v_1, i)
+         h0 = h0
+         i = i + 1
+      elif(abs(S_norm) <= (epsilon/32)):
+         h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_norm, olp, S, x_1, v_1, i)
+         C1 = C1 + 1
+         h0 = 2*h0
+         i = i + 1
+      else:
+         x1 = x_1[-1]
+         v1 = v_1[-1]
+         x_2.pop(-1)
+         v_2.pop(-1)
+         x2 = x_2[-1]
+         v2 = v_2[-1]
+         C2 = C2 + 1
+         h0 = h0/2
    else:
-      h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
+      h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_norm, olp, S, x_1, v_1, i)
       C1 = 0
       C2 = 0
       i = i + 1
@@ -128,15 +109,12 @@ def RK4(x0, v0, h0, Nmax):
    x1, x2 = x0, x0
    x_1, x_2 = [x1], [x2]
    C1, C2 = 0, 0
+   h, n, olp, S = [0], [0], [0], [0]
    if (zadacha == 0 or zadacha == 1):
       v1, v2 = v0, v0
-      v_1, v_2 = [v1], [v2]
-      h, n, olp, S = [0], [0], [0], [0]
    elif (zadacha == 2):
       v1, v2 = np.array(v0), np.array(v0)
-      v_1, v_2 = [v1], [v2]
-      olp, S = [np.array([0, 0])], [np.array([0, 0])]
-      h, n = [0], [0]
+   v_1, v_2 = [v1], [v2]
    while i < Nmax + 1:
       k1_1 = tasks(x1, v1)
       k2_1 = tasks(x1 + h0/2, v1 + 0.5 * h0 * k1_1)
@@ -220,35 +198,20 @@ n, h, x1, v1, v2, S, olp, C1, C2 = RK4(x0, u0, h0, Nmax)
 #* Тут всякое для справки
 for i in range(0, len(x1)):
    x1[i] = round(x1[i], 11)
-abs_olp = np.abs(olp)
-if (zadacha == 0 or zadacha == 1):
-   max_S = max(abs_olp[1:])
-   k_max_S = abs_olp.index(max_S)
-   x_max_S = x1[k_max_S]
-   min_S = min(abs_olp[1:])
-   k_min_S = abs_olp.index(min_S)
-   x_min_S = x1[k_min_S]
-elif (zadacha == 2):
-   abs_olp1 = abs_olp[:, 0]
-   abs_olp1 = abs_olp1.tolist()
-   max_S_1 = max(abs_olp1[1:])
-   k_max_S_1 = abs_olp1.index(max_S_1)
-   x_max_S_1 = x1[k_max_S_1]
-   min_S_1 = min(abs_olp1[1:])
-   k_min_S_1 = abs_olp1.index(min_S_1)
-   x_min_S_1 = x1[k_min_S_1]
-   abs_olp2 = abs_olp[:, 1]
-   abs_olp2 = abs_olp2.tolist()
-   max_S_2 = max(abs_olp2[1:])
-   k_max_S_2 = abs_olp2.index(max_S_2)
-   x_max_S_2 = x1[k_max_S_2]
-   min_S_2 = min(abs_olp2[1:])
-   k_min_S_2 = abs_olp2.index(min_S_2)
-   x_min_S_2 = x1[k_min_S_2]
+abs_olp_ = []
+for i in range(0, len(olp)):
+   abs_olp = abs(olp[i])
+   abs_olp_.append(abs_olp)
+max_S = max(abs_olp_[1:])
+k_max_S = abs_olp_.index(max_S)
+x_max_S = x1[k_max_S]
+min_S = min(abs_olp_[1:])
+k_min_S = abs_olp_.index(min_S)
+x_min_S = x1[k_min_S]
 
-   v1 = np.array(v1)
-   v2 = np.array(v2)
-   S = np.array(S)
+v1 = np.array(v1)
+v2 = np.array(v2)
+S = np.array(S)
 
 max_h = max(h[1:])
 k_max_h = h.index(max_h)
@@ -280,14 +243,8 @@ print('Результаты расчета:')
 print('Число шагов  = ', len(n) - 1)
 print('Выход к границе заданной точности  = ', border - x1[-1])
 print('Текущий x = ', x1[-1], '  ', 'Текущий v = ', v1[-1])
-if (zadacha == 0 or zadacha == 1): 
-   print('Максимальная контрольная величина: ', max_S/16, '  ', 'при x = ', x_max_S)
-   print('Минимальная контрольная величина: ', min_S/16, '  ', 'при x = ', x_min_S)
-elif (zadacha == 2):
-   print('Максимальная контрольная величина по длинне: ', max_S_1/16, '  ', 'при x = ', x_max_S_1)
-   print('Минимальная контрольная величина по длинне: ', min_S_1/16, '  ', 'при x = ', x_min_S_1)
-   print('Максимальная контрольная величина по скорости: ', max_S_2/16, '  ', 'при x = ', x_max_S_2)
-   print('Минимальная контрольная величина по скорости: ', min_S_2/16, '  ', 'при x = ', x_min_S_2)
+print('Максимальная контрольная величина: ', max_S/16, '  ', 'при x = ', x_max_S)
+print('Минимальная контрольная величина: ', min_S/16, '  ', 'при x = ', x_min_S)
 print('Число увеличений шага: ', C1)
 print('Число уменьшений шага: ', C2)
 print('Максимальный шаг: ', max_h, '  ', 'при x = ', x_max_h)
@@ -308,7 +265,7 @@ elif (zadacha == 1):
    data = pd.DataFrame(data = table)
    data.to_csv("table_lab_1.csv", index=False)
 elif (zadacha == 2):
-   table = {'n': n, 'h': h, 'x': x1, 'v[1]_1': v1[:, 0], 'v[2]_1': v1[:, 1], 'v[1]_2': v2[:, 0], 'v[2]_2': v2[:, 1], 'S[1]': S[: ,0], 'S[2]': S[:, 1], 'ОЛП[1]': abs_olp1, 'ОЛП[2]': abs_olp2}
+   table = {'n': n, 'h': h, 'x': x1, 'v[1]_1': v1[:, 0], 'v[2]_1': v1[:, 1], 'v[1]_2': v2[:, 0], 'v[2]_2': v2[:, 1], 'S': S, 'ОЛП': abs_olp_}
    data = pd.DataFrame(data = table)
    data.to_csv("table_lab_1.csv", index=False)
 plot()

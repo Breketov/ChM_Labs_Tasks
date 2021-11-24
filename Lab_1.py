@@ -73,43 +73,46 @@ def znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i):
          if((epsilon/32) <= abs(S_) <= epsilon):
             h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
             h0 = h0
+            i = i + 1
          elif(abs(S_) <= (epsilon/32)):
             h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
             C1 = C1 + 1
             h0 = 2*h0
+            i = i + 1
          else:
+            x1 = x_1[-1]
+            v1 = v_1[-1]
             x_2.pop(-1)
             v_2.pop(-1)
             x2 = x_2[-1]
             v2 = v_2[-1]
-            h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
-            x_2.append(x2)
-            v_2.append(v2)
             C2 = C2 + 1
             h0 = h0/2
       elif (zadacha == 2):
          if(((epsilon/32) <= abs(S_[0]) <= epsilon) and ((epsilon/32) <= abs(S_[1]) <= epsilon)):
             h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
             h0 = h0
+            i = i + 1
          elif((abs(S_[0]) <= (epsilon/32)) and (abs(S_[1]) <= (epsilon/32))):
             h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
             C1 = C1 + 1
             h0 = 2*h0
+            i = i + 1
          else:
+            x1 = x_1[-1]
+            v1 = v_1[-1]
             x_2.pop(-1)
             v_2.pop(-1)
             x2 = x_2[-1]
             v2 = v_2[-1]
-            h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
-            x_2.append(x2)
-            v_2.append(v2)
             C2 = C2 + 1
             h0 = h0/2
    else:
       h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
       C1 = 0
       C2 = 0
-   return x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2
+      i = i + 1
+   return x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i
 
 def func_border(x1):
    if ((border - epsilon_gr <= x1) and (x1 <= border)):
@@ -152,8 +155,7 @@ def RK4(x0, v0, h0, Nmax):
          j = j + 1
       x_2.append(x2)
       v_2.append(v2)
-      x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2 = znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i)
-      i = i + 1
+      x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i = znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i)
       z = func_border(x1)
       if (z == 0):
          break

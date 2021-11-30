@@ -71,8 +71,6 @@ def func_border(x1):
       return 0
    elif (x1 >= border):
       return 1
-   else: 
-      return 2
 
 #* Рунге-Кутта
 def RK4(x0, v0, h0, Nmax):
@@ -103,7 +101,6 @@ def RK4(x0, v0, h0, Nmax):
       x_2.append(x2)
       v_2.append(v2)
       x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i = znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i)
-
       z = func_border(x1)
       if (z == 0):
          break
@@ -111,10 +108,15 @@ def RK4(x0, v0, h0, Nmax):
          olp.pop(-1)
          h.pop(-1)
          x_1.pop(-1)
+         x_2.pop(-1)
+         x1 = x_1[-1]
+         x2 = x_2[-1]
          v_1.pop(-1)
          v_2.pop(-1)
+         v1 = v_1[-1]
+         v2 = v_2[-1]
          n.pop(-1)
-         break
+         h0 = h0/2
    return n, h, x_1, v_1, v_2, olp, C1, C2
 
 #* Терминал

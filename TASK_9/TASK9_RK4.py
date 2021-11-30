@@ -6,21 +6,57 @@ def task(x, u):
    dudx = -1 * a * (u - theta)
    return dudx
 
+def record(olp, h, x1, v1, i, olp_, h_, x_1, v_1, n_):
+   olp_.append(olp)
+   h_.append(h)
+   x_1.append(x1)
+   v_1.append(v1)
+   n_.append(i)
+   return olp_, h_, x_1, v_1, n_
+
+def values(x1, v1, x2, v2, h, h_, n_, olp_, C1, C2, x_1, v_1, x_2, v_2, i):
+   S = (v2 - v1)/15
+   olp = S*16
+   if (contr_loc_ == 1):
+      if((epsilon/32) <= abs(S) <= epsilon):
+         olp_, h_, x_1, v_1, n_ = record(olp, h, x1, v1, i, olp_, h_, x_1, v_1, n_)
+         h = h
+         i = i + 1
+      elif(abs(S) <= (epsilon/32)):
+         olp_, h_, x_1, v_1, n_ = record(olp, h, x1, v1, i, olp_, h_, x_1, v_1, n_)
+         C1 = C1 + 1
+         h = 2*h
+         i = i + 1
+      else:
+         x1 = x_1[-1]
+         v1 = v_1[-1]
+         x_2.pop(-1)
+         v_2.pop(-1)
+         x2 = x_2[-1]
+         v2 = v_2[-1]
+         C2 = C2 + 1
+         h = h/2
+   else:
+      olp_, h_, x_1, v_1, n_ = record(olp, h, x1, v1, i, olp_, h_, x_1, v_1, n_)
+      C1 = 0
+      C2 = 0
+      i = i + 1
+   return x1, v1, x2, v2, h, h_, n_, olp_, C1, C2, x_1, v_1, x_2, v_2, i
+
+def func_border(x1):
+   if ((border - epsilon_gr <= x1) and (x1 <= border)):
+      return 0
+   elif (x1 >= border):
+      return 1
+
 #* Рунге-Кутта
 def RK4(x0, v0, h, Nmax):
    i = 1
-   x1 = x0
-   v1 = v0
-   x2 = x0
-   v2 = v0
-   olp_ = [0]
-   h_ = [0]
-   x_1 = [x0]
-   v_1 = [v0]
-   n_ = [0]
-   x_2 = [x0]
-   v_2 = [v0]
-   
+   x1, x2 = x0, x0
+   v1, v2 = v0, v0
+   x_1, x_2 = [x0], [x0]
+   v_1, v_2 = [v0], [v0]
+   n_, h_, olp_ = [0], [0], [0]
    C1 = 0
    C2 = 0
    while i < Nmax + 1:
@@ -41,68 +77,23 @@ def RK4(x0, v0, h, Nmax):
          j = j + 1
       x_2.append(x2)
       v_2.append(v2)
-      S = (v2 - v1)/15
-      olp = S*16
-      if (contr_loc_ == 1):
-         if((epsilon/32) <= abs(S) <= epsilon):
-            olp_.append(olp)
-            h_.append(h)
-            x_1.append(x1)
-            v_1.append(v1)
-            n_.append(i)
-            h = h
-            i = i + 1
-         elif(abs(S) <= (epsilon/32)):
-            olp_.append(olp)
-            h_.append(h)
-            x_1.append(x1)
-            v_1.append(v1)
-            n_.append(i)
-            C1 = C1 + 1
-            h = 2*h
-            i = i + 1
-         else:
-            x1 = x_1[-1]
-            v1 = v_1[-1]
-            x_2.pop(-1)
-            v_2.pop(-1)
-            x2 = x_2[-1]
-            v2 = v_2[-1]
-            C2 = C2 + 1
-            h0 = h0/2
-            C2 = C2 + 1
-            h = h/2
-      else:
-         olp_.append(olp)
-         x_1.append(x1)
-         v_1.append(v1)
-         h_.append(h)
-         n_.append(i)
-         C1 = 0
-         C2 = 0
-         i = i + 1
-      if((v0 >= theta)):
-         if(v1 <= theta + epsilon_gr):
-            break
-         elif (theta <= v1):
-            olp_.pop(-1)
-            h_.pop(-1)
-            x_1.pop(-1)
-            v_1.pop(-1)
-            v_2.pop(-1)
-            n_.pop(-1)
-            break
-      else:    
-         if((theta - epsilon_gr <= v1)):
-            break
-         elif (theta >= v1):
-            olp.pop(-1)
-            h_.pop(-1)
-            x_1.pop(-1)
-            v_1.pop(-1)
-            v_2.pop(-1)
-            n_.pop(-1)
-            break
+      x1, v1, x2, v2, h, h_, n_, olp_, C1, C2, x_1, v_1, x_2, v_2, i = values(x1, v1, x2, v2, h, h_, n_, olp_, C1, C2, x_1, v_1, x_2, v_2, i)
+      z = func_border(x1)
+      if (z == 0):
+         break
+      elif (z == 1):
+         olp_.pop(-1)
+         h_.pop(-1)
+         x_1.pop(-1)
+         x_2.pop(-1)
+         x1 = x_1[-1]
+         x2 = x_2[-1]
+         v_1.pop(-1)
+         v_2.pop(-1)
+         v1 = v_1[-1]
+         v2 = v_2[-1]
+         n_.pop(-1)
+         h = h/2
    return n_, h_, x_1, v_1, v_2, olp_, C1, C2
 
 #* Терминал
@@ -119,7 +110,9 @@ u0 = float(input('Начальная температура u0 = '))
 print('Введите параметры задачи:')                  
 a = float(input('Положительный коэффициент пропорциональности a = '))
 theta = float(input('Температура жидкости/газа theta = '))
-print('Задайте точность выхода по температуре сверху:')
+print('Задайте границу по времени:')
+border = float(input('X = '))
+print('Задайте точность выхода на границу:')
 epsilon_gr = float(input('epsilon = '))
 print ('С контролем локальной погрешности?  Введите Да или Нет')
 contr_loc = input()
@@ -140,7 +133,7 @@ h = float(input('h = '))
 n, h, x_1, v_1, v_2, olp, C1, C2  = RK4(x0, u0, h, Nmax)
 
 for i in range(0, len(x_1)):
-   x_1[i] = round(x_1[i], 11)
+   x_1[i] = round(x_1[i], 12)
 abs_olp_ = []
 for i in range(0, len(olp)):
    abs_olp = abs(olp[i])
@@ -165,7 +158,7 @@ print('№ Варианта задания: 7')
 print('Тип задачи: Основная')
 print('Метод Рунге Кутта порядка p = 4   способ счета одношаговый')
 print('Время начала счета = ', x0, '  ', 'Начальная температура = ', u0, '°C')                               
-print('Точка выхода (условие остановки счета) = ', theta, '°C')
+print('Точка выхода (условие остановки счета) = ', x_1[-1],)
 print('epsilon граничный  = ', epsilon_gr)                               
 print('Начальный шаг h0 = ', h[1],'  ', 'Nmax = ', Nmax)
 if (contr_loc_ == 1):
@@ -177,7 +170,7 @@ elif (contr_loc_ == 0):
 print(' ')
 print('Результаты расчета:')
 print('Число шагов  = ', len(n) - 1)
-print('Выход к границе заданной точности  = ', theta - v_1[-1])                           #v temperature
+print('Выход к границе заданной точности  = ', border - x_1[-1])
 print('Текущее время = ', x_1[-1], '  ', 'Текущая температура = ', v_1[-1], '°C')
 print('Максимальная контрольная величина: ', max_S/16, '  ', 'при x = ', x_max_S)
 print('Минимальная контрольная величина: ', min_S/16, '  ', 'при x = ', x_min_S)

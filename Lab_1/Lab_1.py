@@ -1,8 +1,7 @@
-from math import sqrt
+import math
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-
 
 #* Всякие задачи
 def test_true(x, u0):
@@ -14,7 +13,7 @@ def tasks(x, u):
    if (zadacha == 0):
       return -1* 3/2 * u
    elif (zadacha == 1):
-      return 1/((1+(x**2))**(1/3))*(u**2) + u - (u**3)*math.sin(10*x)
+      return (u**2)/((1+(x**2))**(1/3)) + u - (u**3)*math.sin(10*x)
    elif (zadacha == 2):
       du = u[1]
       dx = -a* (u[1]**2) - b * u[0]
@@ -30,6 +29,7 @@ def plot():
       plt.legend()
       plt.grid()
       plt.savefig('График_Тестовая.png', bbox_inches='tight')
+      plt.show()
    elif (zadacha == 1):
       plt.plot(x1, v1, 'o-', label = 'Численная траектория')
       plt.xlabel('x')
@@ -37,6 +37,7 @@ def plot():
       plt.legend()
       plt.grid()
       plt.savefig('График_Основная_1.png', bbox_inches='tight')
+      plt.show()
    elif (zadacha == 2):
       plt.plot(x1, v1[:, 0], 'o-', label = 'Численная траектория по v[1]')
       plt.plot(x1, v1[:, 1], 'x-', label = 'Численная траектория по v[2]')
@@ -56,9 +57,9 @@ def plot():
       plt.show()
  
 #* Всякий функционал
-def record(x1, v1, h, h0, n, olp_, S_norm, olp, S, x_1, v_1, i):
+def record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i):
    olp.append(olp_)
-   S.append(S_norm)
+   S.append(S_)
    h.append(h0)
    x_1.append(x1)
    v_1.append(v1)
@@ -67,15 +68,18 @@ def record(x1, v1, h, h0, n, olp_, S_norm, olp, S, x_1, v_1, i):
 
 def znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i):
    S_ = (v2 - v1)/15
-   S_norm = sqrt((S_[0]**2) + (S_[1]**2))
-   olp_ = S_norm*16
+   if ((zadacha == 0) or (zadacha == 1)):
+      olp_ = S_*16
+   elif (zadacha == 2):
+      S_ = math.sqrt((S_[0]**2) + (S_[1]**2))
+      olp_ = S_*16
    if (contr_loc_ == 1):
-      if((epsilon/32) <= abs(S_norm) <= epsilon):
-         h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_norm, olp, S, x_1, v_1, i)
+      if((epsilon/32) <= abs(S_) <= epsilon):
+         h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
          h0 = h0
          i = i + 1
-      elif(abs(S_norm) <= (epsilon/32)):
-         h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_norm, olp, S, x_1, v_1, i)
+      elif(abs(S_) <= (epsilon/32)):
+         h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
          C1 = C1 + 1
          h0 = 2*h0
          i = i + 1
@@ -100,8 +104,6 @@ def func_border(x1):
       return 0
    elif (x1 >= border):
       return 1
-   else: 
-      return 2
 
 #* Рунге-Кутта
 def RK4(x0, v0, h0, Nmax):
@@ -139,13 +141,19 @@ def RK4(x0, v0, h0, Nmax):
          break
       elif (z == 1):
          olp.pop(-1)
-         S.pop(-1)
          h.pop(-1)
          x_1.pop(-1)
+         x_2.pop(-1)
+         x1 = x_1[-1]
+         x2 = x_2[-1]
          v_1.pop(-1)
          v_2.pop(-1)
+         v1 = v_1[-1]
+         v2 = v_2[-1]
          n.pop(-1)
-         break
+         S.pop(-1)
+         C2 = C2 + 1
+         h0 = h0/4
    return n, h, x_1, v_1, v_2, S, olp, C1, C2
 
 #* Терминал
@@ -175,7 +183,7 @@ elif (zadacha == 2):
    a = float(input('a = '))
    b = float(input('b = '))
 print('Задайте правую границу по x:')
-border = float(input('x = '))
+border = float(input('X = '))
 print('Задайте точность выхода на границу:')
 epsilon_gr = float(input('epsilon = '))
 print('Задайте максимальное число шагов:')
@@ -253,9 +261,9 @@ print('_________________________________________________________________________
 
 #* Вывод данных
 if (zadacha == 0):
-   x, u = test_true(x_1, u0)
-   v_1 = np.array(v_1)
-   e = u - v_1
+   x, u = test_true(x1, u0)
+   v1 = np.array(v1)
+   e = u - v1
    e = np.abs(e)
    table = {'n': n, 'h': h, 'x': x1, 'v_1': v1, 'v_2': v2, 'S': S, 'ОЛП': olp, 'u': u, '|u-v|': e}
    data = pd.DataFrame(data = table)

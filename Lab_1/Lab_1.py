@@ -74,11 +74,11 @@ def znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i):
       S_ = math.sqrt((S_[0]**2) + (S_[1]**2))
       olp_ = S_*16
    if (contr_loc_ == 1):
-      if((epsilon/32) <= abs(S_) <= epsilon):
+      if((epsilon/32 <= abs(S_)) and (abs(S_)<= epsilon)):
          h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
          h0 = h0
          i = i + 1
-      elif(abs(S_) <= (epsilon/32)):
+      elif(abs(S_) < (epsilon/32)):
          h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
          C1 = C1 + 1
          h0 = 2*h0
@@ -90,6 +90,7 @@ def znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i):
          v_2.pop(-1)
          x2 = x_2[-1]
          v2 = v_2[-1]
+         h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
          C2 = C2 + 1
          h0 = h0/2
    else:
@@ -153,7 +154,7 @@ def RK4(x0, v0, h0, Nmax):
          n.pop(-1)
          S.pop(-1)
          C2 = C2 + 1
-         h0 = h0/4
+         h0 = h0/2
    return n, h, x_1, v_1, v_2, S, olp, C1, C2
 
 #* Терминал
@@ -265,11 +266,11 @@ if (zadacha == 0):
    v1 = np.array(v1)
    e = u - v1
    e = np.abs(e)
-   table = {'n': n, 'h': h, 'x': x1, 'v_1': v1, 'v_2': v2, 'S': S, 'ОЛП': olp, 'u': u, '|u-v|': e}
+   table = {'n': n, 'h': h, 'x': x1, 'v_1': v1, 'v_2': v2, 'S': S, 'ОЛП': abs_olp_, 'u': u, '|u-v|': e}
    data = pd.DataFrame(data = table)
    data.to_csv("table_lab_1.csv", index=False)
 elif (zadacha == 1):
-   table = {'n': n, 'h': h, 'x': x1, 'v_1': v1, 'v_2': v2, 'S': S, 'ОЛП': olp}
+   table = {'n': n, 'h': h, 'x': x1, 'v_1': v1, 'v_2': v2, 'S': S, 'ОЛП': abs_olp_}
    data = pd.DataFrame(data = table)
    data.to_csv("table_lab_1.csv", index=False)
 elif (zadacha == 2):
@@ -277,3 +278,6 @@ elif (zadacha == 2):
    data = pd.DataFrame(data = table)
    data.to_csv("table_lab_1.csv", index=False)
 plot()
+
+for i in range(1, len(abs_olp_) - 1):
+   print('i = ', i, '||||', abs_olp_[i+1]/abs_olp_[i])

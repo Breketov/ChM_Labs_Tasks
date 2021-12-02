@@ -219,3 +219,6 @@ table = {'n': n, 'h': h, 'x': x1, 'v[1]_1': v1[:, 0], 'v[2]_1': v1[:, 1], 'v[1]_
 data = pd.DataFrame(data = table)
 data.to_csv("Таблица_Зачада_11.csv", index=False)
 plot()
+
+for i in range(1, len(olp) - 1):
+   print('i = ', i, '||||', olp[i+1]/olp[i])

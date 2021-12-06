@@ -93,6 +93,7 @@ def RK4(x0, v0, h, Nmax):
          v1 = v_1[-1]
          v2 = v_2[-1]
          n_.pop(-1)
+         i = i - 1
          h = h/2
    return n_, h_, x_1, v_1, v_2, olp_, C1, C2
 

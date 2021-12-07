@@ -1,4 +1,3 @@
-import math
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -11,9 +10,11 @@ def test_true(x, u0):
 
 def tasks(x, u):
    if (zadacha == 0):
-      return -1* 3/2 * u
+      dudx = -1* 3/2 * u
+      return dudx
    elif (zadacha == 1):
-      return (u**2)/((1+(x**2))**(1/3)) + u - (u**3)*math.sin(10*x)
+      dudx = (u*u)/((1 + x*x)**(1/3)) + u - (u**3)*np.sin(10*x)
+      return dudx
    elif (zadacha == 2):
       du = u[1]
       dx = -a* (u[1]**2) - b * u[0]
@@ -57,44 +58,43 @@ def plot():
       plt.show()
  
 #* Всякий функционал
-def record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i):
+def record(x1, v1, x2, v2, h, h0, n, olp_, S_, olp, S, x_1, v_1, x_2, v_2, i):
    olp.append(olp_)
    S.append(S_)
    h.append(h0)
    x_1.append(x1)
    v_1.append(v1)
+   x_2.append(x2)
+   v_2.append(v2)
    n.append(i)
-   return h, n, olp, S, x_1, v_1
+   return h, n, olp, S, x_1, v_1, x_2, v_2
 
 def znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i):
    S_ = (v2 - v1)/15
    if ((zadacha == 0) or (zadacha == 1)):
       olp_ = S_*16
    elif (zadacha == 2):
-      S_ = math.sqrt((S_[0]**2) + (S_[1]**2))
+      S_ = np.sqrt((S_[0]**2) + (S_[1]**2))
       olp_ = S_*16
    if (contr_loc_ == 1):
       if((epsilon/32 <= abs(S_)) and (abs(S_)<= epsilon)):
-         h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
+         h, n, olp, S, x_1, v_1, x_2, v_2 = record(x1, v1, x2, v2, h, h0, n, olp_, S_, olp, S, x_1, v_1, x_2, v_2, i)
          h0 = h0
          i = i + 1
       elif(abs(S_) < (epsilon/32)):
-         h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
+         h, n, olp, S, x_1, v_1, x_2, v_2 = record(x1, v1, x2, v2, h, h0, n, olp_, S_, olp, S, x_1, v_1, x_2, v_2, i)
          C1 = C1 + 1
          h0 = 2*h0
          i = i + 1
       else:
          x1 = x_1[-1]
-         v1 = v_1[-1]
-         x_2.pop(-1)
-         v_2.pop(-1)
          x2 = x_2[-1]
-         v2 = v_2[-1]
-         h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
+         v1 = v_1[-1]
+         v2 = v_2[-1] 
          C2 = C2 + 1
          h0 = h0/2
    else:
-      h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_norm, olp, S, x_1, v_1, i)
+      h, n, olp, S, x_1, v_1, x_2, v_2 = record(x1, v1, x2, v2, h, h0, n, olp_, S_, olp, S, x_1, v_1, x_2, v_2, i)
       C1 = 0
       C2 = 0
       i = i + 1
@@ -134,8 +134,6 @@ def RK4(x0, v0, h0, Nmax):
          x2 = x2 + h0/2
          v2 = v2 + h0/12 * (k1_2 + 2*k2_2 + 2*k3_2 + k4_2)
          j = j + 1
-      x_2.append(x2)
-      v_2.append(v2)
       x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i = znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i)
       z = func_border(x1)
       if (z == 0):
@@ -154,7 +152,8 @@ def RK4(x0, v0, h0, Nmax):
          n.pop(-1)
          S.pop(-1)
          C2 = C2 + 1
-         h0 = h0/2
+         i = i - 1
+         h0 = h0/4
    return n, h, x_1, v_1, v_2, S, olp, C1, C2
 
 #* Терминал
@@ -278,6 +277,3 @@ elif (zadacha == 2):
    data = pd.DataFrame(data = table)
    data.to_csv("table_lab_1.csv", index=False)
 plot()
-
-for i in range(1, len(abs_olp_) - 1):
-   print('i = ', i, '||||', abs_olp_[i+1]/abs_olp_[i])

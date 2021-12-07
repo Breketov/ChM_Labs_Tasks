@@ -196,7 +196,3 @@ plt.xlabel('t')
 plt.ylabel("°C")
 plt.grid()
 plt.savefig('График_Задача_9.png', bbox_inches='tight')
-
-
-for i in range(1, len(olp) - 1):
-   print('i = ', i, '||||', olp[i+1]/olp[i])

@@ -53,8 +53,6 @@ def znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i):
       else:
          x1 = x_1[-1]
          v1 = v_1[-1]
-         x_2.pop(-1)
-         v_2.pop(-1)
          x2 = x_2[-1]
          v2 = v_2[-1]
          C2 = C2 + 1
@@ -116,6 +114,7 @@ def RK4(x0, v0, h0, Nmax):
          v1 = v_1[-1]
          v2 = v_2[-1]
          n.pop(-1)
+         i = i - 1
          h0 = h0/2
    return n, h, x_1, v_1, v_2, olp, C1, C2
 
@@ -218,7 +217,4 @@ print('_________________________________________________________________________
 table = {'n': n, 'h': h, 'x': x1, 'v[1]_1': v1[:, 0], 'v[2]_1': v1[:, 1], 'v[1]_2': v2[:, 0], 'v[2]_2': v2[:, 1], 'ОЛП': abs_olp_}
 data = pd.DataFrame(data = table)
 data.to_csv("Таблица_Зачада_11.csv", index=False)
-plot()
-
-for i in range(1, len(olp) - 1):
-   print('i = ', i, '||||', olp[i+1]/olp[i])
+#plot()

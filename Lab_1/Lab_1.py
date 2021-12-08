@@ -126,6 +126,7 @@ def RK4(x0, v0, h0, Nmax):
       x1 = x1 + h0
       v1 = v1 + h0/6 * (k1_1 + 2*k2_1 + 2*k3_1 + k4_1)
       j = i - 1
+      v2 = v_1[-1]
       while j < i + 1:
          k1_2 = tasks(x2, v2)
          k2_2 = tasks(x2 + h0/4, v2 + 0.25 * h0 * k1_2)
@@ -153,7 +154,7 @@ def RK4(x0, v0, h0, Nmax):
          S.pop(-1)
          C2 = C2 + 1
          i = i - 1
-         h0 = h0/4
+         h0 = h0/2
    return n, h, x_1, v_1, v_2, S, olp, C1, C2
 
 #* Терминал
@@ -277,3 +278,9 @@ elif (zadacha == 2):
    data = pd.DataFrame(data = table)
    data.to_csv("table_lab_1.csv", index=False)
 plot()
+
+for i in range(2, len(abs_olp_)):
+   if abs_olp_[i+1] < abs_olp_[i]:
+      print(abs_olp_[i]/abs_olp_[i+1])
+   elif abs_olp_[i+1] > abs_olp_[i]:
+      print(abs_olp_[i+1]/abs_olp_[i])

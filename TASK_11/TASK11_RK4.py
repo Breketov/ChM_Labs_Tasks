@@ -88,6 +88,7 @@ def RK4(x0, v0, h0, Nmax):
       x1 = x1 + h0
       v1 = v1 + h0/6 * (k1_1 + 2*k2_1 + 2*k3_1 + k4_1)
       j = i - 1
+      v2 = v_1[-1]
       while j < i + 1:
          k1_2 = task(x2, v2)
          k2_2 = task(x2 + h0/4, v2 + 0.25 * h0 * k1_2)

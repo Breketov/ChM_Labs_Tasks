@@ -27,14 +27,16 @@ def plot():
    plt.savefig('График_Фазовый_Задача_11.png', bbox_inches='tight')
 
 #* Всякий функционал
-def record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i):
+def record(x1, v1, x2, v2, h, h0, n, olp_, S_, olp, S, x_1, v_1, x_2, v_2, i):
    olp.append(olp_)
    S.append(S_)
    h.append(h0)
    x_1.append(x1)
    v_1.append(v1)
+   x_2.append(x2)
+   v_2.append(v2)
    n.append(i)
-   return h, n, olp, S, x_1, v_1
+   return h, n, olp, S, x_1, v_1, x_2, v_2
 
 def znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i):
    S_ = (v2 - v1)/15
@@ -42,11 +44,11 @@ def znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i):
    olp_ = S_norm*16
    if (contr_loc_ == 1):
       if((epsilon/32) <= abs(S_norm) <= epsilon):
-         h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
+         h, n, olp, S, x_1, v_1, x_2, v_2 = record(x1, v1, x2, v2, h, h0, n, olp_, S_, olp, S, x_1, v_1, x_2, v_2, i)
          h0 = h0
          i = i + 1
       elif(abs(S_norm) <= (epsilon/32)):
-         h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
+         h, n, olp, S, x_1, v_1, x_2, v_2 = record(x1, v1, x2, v2, h, h0, n, olp_, S_, olp, S, x_1, v_1, x_2, v_2, i)
          C1 = C1 + 1
          h0 = 2*h0
          i = i + 1
@@ -58,7 +60,7 @@ def znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i):
          C2 = C2 + 1
          h0 = h0/2
    else:
-      h, n, olp, S, x_1, v_1 = record(x1, v1, h, h0, n, olp_, S_, olp, S, x_1, v_1, i)
+      h, n, olp, S, x_1, v_1, x_2, v_2 = record(x1, v1, x2, v2, h, h0, n, olp_, S_, olp, S, x_1, v_1, x_2, v_2, i)
       C1 = 0
       C2 = 0
       i = i + 1
@@ -97,8 +99,6 @@ def RK4(x0, v0, h0, Nmax):
          x2 = x2 + h0/2
          v2 = v2 + h0/12 * (k1_2 + 2*k2_2 + 2*k3_2 + k4_2)
          j = j + 1
-      x_2.append(x2)
-      v_2.append(v2)
       x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i = znach(x1, v1, x2, v2, h, h0, n, olp, S, C1, C2, x_1, v_1, x_2, v_2, i)
       z = func_border(x1)
       if (z == 0):
@@ -116,7 +116,7 @@ def RK4(x0, v0, h0, Nmax):
          v2 = v_2[-1]
          n.pop(-1)
          i = i - 1
-         h0 = h0/2
+         h0 = h0/4
    return n, h, x_1, v_1, v_2, olp, C1, C2
 
 #* Терминал

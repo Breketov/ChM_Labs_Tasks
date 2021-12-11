@@ -13,11 +13,12 @@ def true_task(x, v):
       u.append(list(3*np.exp(-1000*x[i])*np.array([-1, 1]) + 10*np.exp(-0.01*x[i])*np.array([1, 1])))
    u = np.array(u)
    E = []
+   e_ = [] 
    for i in range(0, len(u)):
       e = ((u[i] - v[i]))
+      e_.append(list(e))
       E.append(max(abs(e[0]), abs(e[1])))
-   return u, E
-
+   return u, E, np.array(e_)
 def record(x1, v1, v2, h, h0, n, olp_, S_, olp, S, x_1, v_1, v_2, i):
    olp.append(olp_)
    S.append(S_)
@@ -61,37 +62,73 @@ def func_border(x1):
    elif (x1 >= border):
       return 1
 
-def plot():
-   x = np.linspace(0, 1000, 51)
-   u = true_task(x)
-   plt.plot(x, u[:, 0], 'o-', label='u1(t) - Истинная траектория')
-   plt.plot(x, u[:, 1], 'x-', label='u2(t) - Истинная траектория')
+def plot(x, u, v, E):
+   plt.plot(x, u[:, 0], 'o-', label='u[1] - Истинная траектория')
+   plt.plot(x, u[:, 1], 'x-', label='u[2] - Истинная траектория')
    plt.legend()
-   plt.xlabel('t')
-   plt.ylabel('u1(t)   u2(t)')
+   plt.xlabel('x')
+   plt.ylabel('u[1](x)   u[2](x)')
    plt.grid()
+   plt.savefig('График_Истинный.png', bbox_inches='tight')
    plt.show()
 
-   x = np.linspace(0, 0.01, 51)
-   u = true_task(x)
-   plt.plot(x, u[:, 0], 'o-', label='u1(t) - Истинная траектория')
-   plt.plot(x, u[:, 1], 'x-', label='u2(t) - Истинная траектория')
+   plt.plot(x, u[:, 0], 'o-', label='u[1] - Истинная траектория')
+   plt.plot(x, u[:, 1], 'x-', label='u[2] - Истинная траектория')
    plt.axis([0, 0.01, 6, 14])
    plt.legend()
-   plt.xlabel('t')
-   plt.ylabel('u1(t)   u2(t)')
+   plt.xlabel('x')
+   plt.ylabel('u[1](x)   u[2](x)')
    plt.grid()
+   plt.savefig('График_Истинный_0-0.01.png', bbox_inches='tight')
    plt.show()
 
-   x = np.linspace(0, 0.5, 51)
-   u = true_task(x)
-   plt.plot(x, u[:, 0], 'o-', label='u1(t) - Истинная траектория')
-   plt.plot(x, u[:, 1], 'x-', label='u2(t) - Истинная траектория')
+   plt.plot(x, u[:, 0], 'o-', label='u[1] - Истинная траектория')
+   plt.plot(x, u[:, 1], 'x-', label='u[2] - Истинная траектория')
    plt.axis([0, 0.5, 6, 14])
    plt.legend()
-   plt.xlabel('t')
-   plt.ylabel('u1(t)   u2(t)')
+   plt.xlabel('x')
+   plt.ylabel('u[1](x)   u[2](x)')
    plt.grid()
+   plt.savefig('График_Истинный_0-0.05.png', bbox_inches='tight')
+   plt.show()
+
+   plt.plot(x, v[:, 0], 'o-', label='v[1] - Численная траектория')
+   plt.plot(x, v[:, 1], 'x-', label='v[2] - Численная траектория')
+   plt.legend()
+   plt.xlabel('x')
+   plt.ylabel('v[1](x)   v[2](x)')
+   plt.grid()
+   plt.savefig('График_Численный.png', bbox_inches='tight')
+   plt.show()
+
+   plt.plot(x, v[:, 0], 'o-', label='v[1] - Численная траектория')
+   plt.plot(x, v[:, 1], 'x-', label='v[2] - Численная траектория')
+   plt.axis([0, 0.01, 6, 14])
+   plt.legend()
+   plt.xlabel('x')
+   plt.ylabel('v[1](x)   v[2](x)')
+   plt.grid()
+   plt.savefig('График_Численный_0-0.01.png', bbox_inches='tight')
+   plt.show()
+
+   plt.plot(x, v[:, 0], 'o-', label='v[1] - Численная траектория')
+   plt.plot(x, v[:, 1], 'x-', label='v[2] - Численная траектория')
+   plt.axis([0, 0.5, 6, 14])
+   plt.legend()
+   plt.xlabel('x')
+   plt.ylabel('v[1](x)   v[2](x)')
+   plt.grid()
+   plt.savefig('График_Численный_0-0.5.png', bbox_inches='tight')
+   plt.show()
+
+   plt.plot(x, E[:, 0], 'o-', label='E[1] - Глобальная погрешность 1 компоненты')
+   plt.plot(x, E[:, 1], 'x-', label='E[2] - Глобальная погрешность 2 компоненты')
+   plt.axis([0, 0.05, -0.02, 0.02])
+   plt.legend()
+   plt.xlabel('x')
+   plt.ylabel('E[1]   E[2]')
+   plt.grid()
+   plt.savefig('График_Глобальной погрешности.png', bbox_inches='tight')
    plt.show()
 
 def Euler(x0, v0, h0, Nmax):
@@ -105,11 +142,10 @@ def Euler(x0, v0, h0, Nmax):
    C1, C2 = 0, 0
    E = np.array([[1, 0], [0, 1]])
    A = np.array([[-500.005, 499.995], [499.995, -500.005]])
-   while i < Nmax:
+   while i < Nmax + 1:
       B = np.linalg.inv(E - h0*A)
       v1 = B @ v1
       x1 = x1 + h0
-      i = i + 1
       h0 = h0/2
       v2 = v_1[-1]
       for j in range(0, 2):
@@ -133,7 +169,7 @@ def Euler(x0, v0, h0, Nmax):
          v2 = v_2[-1]
          C2 = C2 + 1
          i = i - 1
-         h0 = h0/2
+         h0 = h0/4
    return n, h, x_1, np.array(v_1), np.array(v_2), S, olp, C1, C2
 
 #* Терминал
@@ -167,6 +203,7 @@ x0 = 0
 #* Результат работы РК4 и функционала
 #n, h, x1, v1, v2, S, olp, C1, C2
 n, h, x1, v1, v2, S, olp, C1, C2 = Euler(x0, u0, h0, Nmax)
+u, E, e = true_task(x1, v1)
 
 for i in range(0, len(x1)):
    x1[i] = round(x1[i], 11)
@@ -219,11 +256,8 @@ elif (contr_loc_ == 0):
    print('Шаг не менялся h = ', max_h)
 print('_______________________________________________________________________________________________')
 
-u, E = true_task(x1, v1)
-
 #* Вывод
 table = {'n': n, 'h': h, 'x': x1, 'v1[1]': v1[:, 0], 'v1[2]': v1[:, 1], 'v2[1]': v2[:, 0], 'v2[2]': v2[:, 1], 'S': S, 'ОЛП': abs_olp_, 'u[1]': u[:, 0], 'u[2]': u[:, 1], 'E': E}
 data = pd.DataFrame(data = table)
 data.to_csv("Таблица_Жесткая_Зачада.csv", index=False)
-
-""" plot() """
+plot(x1, u, v1, e)

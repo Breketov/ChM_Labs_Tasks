@@ -19,6 +19,7 @@ def true_task(x, v):
       e_.append(list(e))
       E.append(max(abs(e[0]), abs(e[1])))
    return u, E, np.array(e_)
+   
 def record(x1, v1, v2, h, h0, n, olp_, S_, olp, S, x_1, v_1, v_2, i):
    olp.append(olp_)
    S.append(S_)
@@ -63,8 +64,8 @@ def func_border(x1):
       return 1
 
 def plot(x, u, v, E):
-   plt.plot(x, u[:, 0], 'o-', label='u[1] - Истинная траектория')
-   plt.plot(x, u[:, 1], 'x-', label='u[2] - Истинная траектория')
+   plt.plot(x, u[:, 0], linewidth=3.0, label='u[1] - Истинная траектория')
+   plt.plot(x, u[:, 1], linewidth=3.0, label='u[2] - Истинная траектория')
    plt.legend()
    plt.xlabel('x')
    plt.ylabel('u[1](x)   u[2](x)')
@@ -72,8 +73,8 @@ def plot(x, u, v, E):
    plt.savefig('График_Истинный.png', bbox_inches='tight')
    plt.show()
 
-   plt.plot(x, u[:, 0], 'o-', label='u[1] - Истинная траектория')
-   plt.plot(x, u[:, 1], 'x-', label='u[2] - Истинная траектория')
+   plt.plot(x, u[:, 0], linewidth=3.0, label='u[1] - Истинная траектория')
+   plt.plot(x, u[:, 1], linewidth=3.0, label='u[2] - Истинная траектория')
    plt.axis([0, 0.01, 6, 14])
    plt.legend()
    plt.xlabel('x')
@@ -82,8 +83,8 @@ def plot(x, u, v, E):
    plt.savefig('График_Истинный_0-0.01.png', bbox_inches='tight')
    plt.show()
 
-   plt.plot(x, u[:, 0], 'o-', label='u[1] - Истинная траектория')
-   plt.plot(x, u[:, 1], 'x-', label='u[2] - Истинная траектория')
+   plt.plot(x, u[:, 0], linewidth=3.0, label='u[1] - Истинная траектория')
+   plt.plot(x, u[:, 1], linewidth=3.0, label='u[2] - Истинная траектория')
    plt.axis([0, 0.5, 6, 14])
    plt.legend()
    plt.xlabel('x')
@@ -92,8 +93,8 @@ def plot(x, u, v, E):
    plt.savefig('График_Истинный_0-0.05.png', bbox_inches='tight')
    plt.show()
 
-   plt.plot(x, v[:, 0], 'o-', label='v[1] - Численная траектория')
-   plt.plot(x, v[:, 1], 'x-', label='v[2] - Численная траектория')
+   plt.plot(x, v[:, 0], linewidth=3.0, label='v[1] - Численная траектория')
+   plt.plot(x, v[:, 1], linewidth=3.0, label='v[2] - Численная траектория')
    plt.legend()
    plt.xlabel('x')
    plt.ylabel('v[1](x)   v[2](x)')
@@ -101,8 +102,8 @@ def plot(x, u, v, E):
    plt.savefig('График_Численный.png', bbox_inches='tight')
    plt.show()
 
-   plt.plot(x, v[:, 0], 'o-', label='v[1] - Численная траектория')
-   plt.plot(x, v[:, 1], 'x-', label='v[2] - Численная траектория')
+   plt.plot(x, v[:, 0], linewidth=3.0, label='v[1] - Численная траектория')
+   plt.plot(x, v[:, 1], linewidth=3.0, label='v[2] - Численная траектория')
    plt.axis([0, 0.01, 6, 14])
    plt.legend()
    plt.xlabel('x')
@@ -111,8 +112,8 @@ def plot(x, u, v, E):
    plt.savefig('График_Численный_0-0.01.png', bbox_inches='tight')
    plt.show()
 
-   plt.plot(x, v[:, 0], 'o-', label='v[1] - Численная траектория')
-   plt.plot(x, v[:, 1], 'x-', label='v[2] - Численная траектория')
+   plt.plot(x, v[:, 0], linewidth=3.0, label='v[1] - Численная траектория')
+   plt.plot(x, v[:, 1], linewidth=3.0, label='v[2] - Численная траектория')
    plt.axis([0, 0.5, 6, 14])
    plt.legend()
    plt.xlabel('x')
@@ -121,9 +122,9 @@ def plot(x, u, v, E):
    plt.savefig('График_Численный_0-0.5.png', bbox_inches='tight')
    plt.show()
 
-   plt.plot(x, E[:, 0], 'o-', label='E[1] - Глобальная погрешность 1 компоненты')
-   plt.plot(x, E[:, 1], 'x-', label='E[2] - Глобальная погрешность 2 компоненты')
-   plt.axis([0, 0.05, -0.02, 0.02])
+   plt.plot(x, E[:, 0], linewidth=3.0, label='E[1] - Глобальная погрешность 1 компоненты')
+   plt.plot(x, E[:, 1], linewidth=3.0, label='E[2] - Глобальная погрешность 2 компоненты')
+   plt.axis([0, 0.05, -0.005, 0.005])
    plt.legend()
    plt.xlabel('x')
    plt.ylabel('E[1]   E[2]')
@@ -175,6 +176,10 @@ def Euler(x0, v0, h0, Nmax):
 #* Терминал
 print('_______________________________________________________________________________________________')
 print('Бекетов Евгений | Команда Эльвина | Программа №3 "Жесткая задача"')
+print('Система Жесткой Задачи:')
+print("        u1' = -500.005*u1 + 499.995*u2")
+print("        u2' = 499.995*u1 - 500.005*u2")
+print("        u1(0) = 7; u2(0) = 13")
 print('Реализуется неявный метод Эйлера')
 print('_______________________________________________________________________________________________')
 print('Исходные начальные данные: x0 = 0, u0 = (7, 13)')

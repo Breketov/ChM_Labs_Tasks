@@ -57,11 +57,13 @@ def values(x1, v1, v2, x_1, v_1, v_2, h, h0, n, olp, S, C1, C2, i):
       i = i + 1
    return x1, v1, x_1, v_1, v_2, h, h0, n, olp, S, C1, C2, i
 
-def func_border(x1):
-   if ((border - epsilon_gr <= x1) and (x1 <= border)):
+def func_border(x1, v1):
+   if ((border_x - epsilon_gr_x <= x1) and (x1 <= border_x)):
       return 0
-   elif (x1 >= border):
+   elif (x1 >= border_x):
       return 1
+   if (((0 <= v1[0]) and (v1[0] <= 0 + epsilon_gr_u)) or ((0 <= v1[1]) and (v1[1] <= 0 + epsilon_gr_u))):
+      return 2
 
 def plot(x, u, v, E):
    plt.plot(x, u[:, 0], linewidth=3.0, label='u[1] - Истинная траектория')
@@ -124,7 +126,7 @@ def plot(x, u, v, E):
 
    plt.plot(x, E[:, 0], linewidth=3.0, label='E[1] - Глобальная погрешность 1 компоненты')
    plt.plot(x, E[:, 1], linewidth=3.0, label='E[2] - Глобальная погрешность 2 компоненты')
-   plt.axis([0, 0.05, -0.005, 0.005])
+   """ plt.axis([0, 0.05, -0.005, 0.005]) """
    plt.legend()
    plt.xlabel('x')
    plt.ylabel('E[1]   E[2]')
@@ -154,7 +156,7 @@ def Euler(x0, v0, h0, Nmax):
          v2 = B @ v2
       h0 = h0*2
       x1, v1, x_1, v_1, v_2, h, h0, n, olp, S, C1, C2, i = values(x1, v1, v2, x_1, v_1, v_2, h, h0, n, olp, S, C1, C2, i)
-      z = func_border(x1)
+      z = func_border(x1, v1)
       if (z == 0):
          break
       elif (z == 1):
@@ -171,7 +173,9 @@ def Euler(x0, v0, h0, Nmax):
          C2 = C2 + 1
          i = i - 1
          h0 = h0/4
-   return n, h, x_1, np.array(v_1), np.array(v_2), S, olp, C1, C2
+      elif (z == 2):
+         break
+   return n, h, x_1, np.array(v_1), np.array(v_2), S, olp, C1, C2, z
 
 #* Терминал
 print('_______________________________________________________________________________________________')
@@ -185,9 +189,12 @@ print('_________________________________________________________________________
 print('Исходные начальные данные: x0 = 0, u0 = (7, 13)')
 print('Введите необходимые данные')
 print('Задайте границу по времени:')
-border = float(input('X = '))
+border_x = float(input('X = '))
 print('Задайте точность выхода на границу:')
-epsilon_gr = float(input('epsilon = '))
+print('По переменной x:')
+epsilon_gr_x = float(input('Для x epsilon = '))
+print('По u:')
+epsilon_gr_u = float(input('Для u epsilon = '))
 print ('С контролем локальной погрешности?  Введите Да или Нет')
 contr_loc = input()
 if ((contr_loc == 'да') or (contr_loc == 'Да')):
@@ -207,7 +214,7 @@ x0 = 0
 
 #* Результат работы РК4 и функционала
 #n, h, x1, v1, v2, S, olp, C1, C2
-n, h, x1, v1, v2, S, olp, C1, C2 = Euler(x0, u0, h0, Nmax)
+n, h, x1, v1, v2, S, olp, C1, C2, z = Euler(x0, u0, h0, Nmax)
 u, E, e = true_task(x1, v1)
 
 for i in range(0, len(x1)):
@@ -234,9 +241,10 @@ x_min_h = x1[k_min_h]
 print('_______________________________________Справка_________________________________________________')
 print('Тип метода: Неявный метод Эйлера')
 print('Неявный метод Эйлера:    способ счета одношаговый')
-print('Время начала счета = ', x0, '  ', 'Начальный вектор = ', '(',u0,')')                               
-print('Точка выхода (условие остановки счета) = ', border)
-print('epsilon граничный  = ', epsilon_gr)                               
+print('Время начала счета = ', x0, '  ', 'Начальный вектор = ', '(',u0,')')
+print('Точка выхода (условие остановки счета) = ', border_x)
+print('epsilon граничный по x = ', epsilon_gr_x)
+print('epsilon граничный по u = ', epsilon_gr_u)
 print('Начальный шаг h0 = ', h0,'  ', 'Nmax = ', Nmax)
 if (contr_loc_ == 1):
    print('Контроль модуля локальной погрешности включен')
@@ -247,7 +255,7 @@ elif (contr_loc_ == 0):
 print(' ')
 print('Результаты расчета:')
 print('Число шагов  = ', len(n) - 1)
-print('Выход к границе заданной точности  = ', border - x1[-1])
+print('Выход к границе заданной точности по x = ', border_x - x1[-1])
 print('Текущее время = ', x1[-1], '  ', 'Текущая вектор = ', v1[-1])
 print('Максимальная контрольная величина: ', max_S/2, '  ', 'при x = ', x_max_S)
 print('Минимальная контрольная величина: ', min_S/2, '  ', 'при x = ', x_min_S)

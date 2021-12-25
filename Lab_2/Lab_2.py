@@ -1,53 +1,11 @@
 #                       Лабораторная работа №2
-#                       Версия 0.45
+#                       Версия 0.46
 
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
 """ 
-ksi = 0.3
-ny = [1, 0]
-n = 100
-
-C1 = -2.441089498977808
-C2 = 0.1077561656444751
-C3 = 0.8031153039014358
-C4 = -0.1086898371251591
-
-x = np.empty(n - 1, dtype=np.float16)
-f = np.empty(n - 1, dtype=np.float16)
-cur = np.empty(n, dtype=np.float16)
-next = np.empty(n - 2, dtype=np.float16)
-prev = np.empty(n - 2, dtype=np.float16)
-max = 0
-maxxn = 0
-
-#* Аналитическое решение
-def u1(x):
-   return C1*np.exp(-np.sqrt(ksi/(ksi**2 + 2))*x) + C2*np.exp(np.sqrt(ksi/(ksi**2 + 2))*x) + 1/ksi
-def u2(x):
-   return C3*np.exp(-x) + C4*np.exp(x) + np.sin(np.pi*x)/((ksi**2)*(1 + np.pi**2))
-
-# Функции
-def k1(x):
-   return x**2 + 2
-def k2(x):
-   return x**2
-
-def q1(x):
-   return x
-def q2(x):
-   return x**2
-
-def f1(x):
-   return 1
-def f2(x):
-   return np.sin(np.pi*x)
-
-# Узлы
-def node(i, n):
-   return i/(n + 1)
 
 # Подсчет коэффициентов
 def TEST_coef(a, d, fi):
@@ -215,21 +173,51 @@ def f1(x):
 def f2(x):
    return np.sin(np.pi*x)
 
+#! Матричные коэффициенты
+def coef_matrix(h, n, a, d, fi):
+   A = np.empty(n - 1)
+   B = np.empty(n)
+   C = np.empty(n - 1)
+   for i in range(len(A)):
+      A[i] = a[i]/(h**2)
+   for i in range(len(d)):
+      B[i] = a[i + 1]/(h**2)
+      C[i] = (a[i] + a[i + 1])/(h**2) + d[i]
+   return A, B, C
 
+#! Прогонка
+def progonka(n, A, B, C, a, d ,fi):
+   #* Прямая прогонка
+   alfa = np.empty(n)
+   beta = np.empty(n)
+   alfa[0] = kappa[0]
+   beta[0] = my[0]
+   for i in range(n - 1):
+      alfa[i + 1] = B[i]/(C[i] - A[i]*alfa[i])
+      beta[i + 1] = (fi[i] + A[i]*beta[i])/(C[i] - A[i]*alfa[i])
+   
+   #* Обратная прогонка
+   y = np.empty(n)
+   y[-1] = my[1]
+   for i in range(n - 2, -1, -1):
+      y[i] = alfa[i + 1]*y[i + 1] + beta[i + 1]
+   return y 
+
+#TODO------------------------------------ТЕСТОВАЯ ЗАДАЧА------------------------------------
 #! Точное решение задачи
 def true_solution(x_main):
-   C1 = -2.441089498977808
-   C2 = 0.1077561656444751
-   C3 = 0.8031153039014358
-   C4 = -0.1086898371251591
+   C1 = -0.9603081818828
+   C2 = -1.3730251514504
+   C3 = -2.4598464169268
+   C4 = -6.2589036085123
    u1, u2 = [], []
    x1, x2 = [], []
    for x in x_main:
       if x <= ksi:
-         u1.append(C1*np.exp(-np.sqrt(ksi/(ksi**2 + 2))*x) + C2*np.exp(np.sqrt(ksi/(ksi**2 + 2))*x) + 1/ksi)
+         u1.append(C1*np.exp(np.sqrt(ksi/(ksi**2 + 2))*x) + C2*np.exp(-np.sqrt(ksi/(ksi**2 + 2))*x) + 1/ksi)
          x1.append(x)
       elif x >= ksi:
-         u2.append(C3*np.exp(-x) + C4*np.exp(x) + np.sin(np.pi*x)/((ksi**2)*(1 + np.pi**2)))
+         u2.append(C3*np.exp(x) + C4*np.exp(-x) + np.sin(np.pi*ksi)/0.09)
          x2.append(x)
    plt.plot(x1, u1,'o-', linewidth = 2.0, label='траектория до точки разрыва')
    plt.plot(x2, u2,'o-', linewidth = 2.0, label='траетория после точки разрыва')
@@ -241,21 +229,12 @@ def true_solution(x_main):
    plt.show()
    return u1 + u2
 
+#! Узел
 def node(i, n):
    return i/n
 
-def coef_matrix(a, d, fi):
-   A = np.empty(n)
-   B = np.empty(n - 1)
-   C = np.empty(n - 1)
-   for i in range(len(a)):
-      A[i] = a[i]*(n**2)
-   for i in range(len(d)):
-      B[i] = a[i + 1]*(n**2)
-      C[i] = (a[i] + a[i + 1])*(n**2) + d[i]
-   return A, B, C
-
-def test_coef(a, d, fi):
+#! Коэффициенты тестовой задачи
+def test_coef(n, a, d, fi):
    for i in range(n):
       if ((node(i, n) <= 0.3) and (node(i + 1, n) <= 0.3)):
          a[i] = 2.09
@@ -281,45 +260,84 @@ def test_coef(a, d, fi):
          fi[i] = n*(0.3 - node(i - 0.5, n)) + n*np.sin(np.pi*0.3)*(node(i + 0.5, n) - 0.3)
    return a, d, fi
 
-def test_progonka(A, B, C, a, d ,fi):
-   #! Прямая прогонка
-   alfa = np.empty(n - 1)
-   beta = np.empty(n - 1)
-   alfa[0] = kappa[0]
-   beta[0] = my[0]
-   for i in range(n - 2):
-      alfa[i + 1] = B[i]/(C[i] - A[i]*alfa[i])
-      beta[i + 1] = (fi[i] + A[i]*beta[i])/(C[i] - A[i]*alfa[i])
-   
-   #! Обратная прогонка
-   y = np.empty(n)
-   y[-1] = my[1]
-   for i in range(n - 2, -1, -1):
-      y[i] = alfa[i]*y[i + 1] + beta[i]
-   return y 
-
-def test_task():
+#! Тестовая задача
+def test_task(h, n):
    a = np.empty(n)
    d = np.empty(n - 1)
    fi = np.empty(n - 1)
-   a, d ,fi = test_coef(a, d, fi)
-   A, B, C = coef_matrix(a, d, fi)
-   return test_progonka(A, B, C, a, d ,fi)
+   a, d ,fi = test_coef(n, a, d, fi)
+   A, B, C = coef_matrix(h, n, a, d, fi)
+   return progonka(n, A, B, C, a, d ,fi)
 
-def solution():
+#TODO------------------------------------ОСНОВНАЯ ЗАДАЧА------------------------------------
+#! Коэффициенты тестовой задачи
+def main_coef(n, a, d, fi):
+   for i in range(n):
+      if ((node(i, n) <= 0.3) and (node(i + 1, n) <= 0.3)):
+         a[i] = k1(node(i - 0.5, n))
+      elif ((node(i, n) >= 0.3) and (node(i + 1, n) >= 0.3)):
+         a[i] = k2(node(i - 0.5, n))
+      else:
+         a[i] = 1/((n*(0.3 - node(i - 1, n))/k1(0.5 * (node(i - 1, n) + 0.3))) + (node(i - 1, n) - 0.3)/k2(0.5 * (0.3 + node(i, n))))
+
+   for i in range(n - 1):
+      if ((node(i + 0.5, n) <= 0.3) and (node(i - 0.5, n) <= 0.3)):
+         d[i] = q1(node(i, n))
+      elif ((node(i + 0.5, n) >= 0.3) and (node(i - 0.5, n) >= 0.3)):
+         d[i] = q2(node(i, n))
+      else:
+         d[i] = n*q1(0.5 * (node(i - 0.5, n) + 0.3)*(0.3 - node(i - 0.5, n))) + n*q2(0.5 * (0.3 + node(i + 0.5, n)))*(node(i + 0.5, n) - 0.3)
+   
+   for i in range(n - 1):
+      if ((node(i + 0.5, n) <= 0.3) and (node(i - 0.5, n) <= 0.3)):
+         fi[i] = f1(node(i, n))
+      elif ((node(i + 0.5, n) >= 0.3) and (node(i - 0.5, n) >= 0.3)):
+         fi[i] = f2(node(i, n))
+      else:
+         fi[i] = n*f1(0.5 * (node(i - 0.5, n) + 0.3))*(0.3 - node(i - 0.5, n)) + n*f2(0.5 * (0.3 + node(i + 0.5, n)))*(node(i + 0.5, n) - 0.3)
+   return a, d, fi
+
+#! Основная задача
+def main_task(h, n):
+   a = np.empty(n)
+   d = np.empty(n - 1)
+   fi = np.empty(n - 1)
+   a, d ,fi = main_coef(n, a, d, fi)
+   A, B, C = coef_matrix(h, n, a, d, fi)
+   return progonka(n, A, B, C, a, d ,fi)
+
+#! Запуск просчетов
+def solution(n):
    h = 1/n
-   x_main = [x_start + i*h for i in range(n + 1)]
-   x_aux = [x_start + (i + 0.5)*h for i in range(n - 1)]
-   v = test_task()
-   v[0] = my[0]
+   x_main = [x_start + i*h for i in range(1, n + 1)]
+   v1 = test_task(h, n)
+   v1[0] = my[0]
    u = true_solution(x_main)
-   E = np.abs(u - v)
+   u[0] = my[0]
+   u[-1] = my[1]
+   E = np.abs(u - v1)
 
+   for i in range(len(x_main)):
+      x_main[i] = round(x_main[i], 14)
    Node = [i for i in range(len(x_main))]
-   data_test = {'№ Узла': Node, 'x': x_main, 'v': v, 'u': u, '|u - v|': E}
+   data_test = {'№ Узла': Node, 'x': x_main, 'v': v1, 'u': u, '|u - v|': E}
    data = pd.DataFrame(data = data_test)
    data.to_csv("data_test.csv", index=False)
    
+   h = h/2
+   v2 = main_task(h, n)
+   v2[0] = my[0]
+   v2[-1] = my[1]
+
+   e = np.abs(v1 - v2)
+   Node = [i for i in range(len(x_main))]
+   data_test = {'№ Узла': Node, 'x': x_main, 'v1': v1, 'v2': v2, '|v2 - v1|': e}
+   data = pd.DataFrame(data = data_test)
+   data.to_csv("data_main.csv", index=False)
+   
+
+
+
 
 
 #* Терминал
@@ -337,4 +355,4 @@ kappa = [0, 0]
 my = [1, 0]
 ksi = 0.3
 
-solution()
+solution(n)

@@ -6,5 +6,5 @@
 #
 #
 # Lab_1 - - - - OK
-# Lab_2 - - - - Not OK
-# Lab_3 - - - - Not OK
+# Lab_2 - - - - OK
+# Lab_3 - - - - OK

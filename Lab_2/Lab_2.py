@@ -1,8 +1,11 @@
 #                                Лабораторная работа №2
-#                                Версия 0.5.10
+#                                Версия 0.6.12
+import decimal
+from math import sin
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from sympy import *
 
 #TODO Основные параметры
 x_start = 0
@@ -42,38 +45,46 @@ def test_task(n):
    data_test = {'№ Узла': Node, 'x': x_main, 'v': v, 'u': u, '|u - v|': E}
    data = pd.DataFrame(data = data_test)
    data.to_csv("data_test.csv", index=False)
-
-   plot_test(x_main, u, v, E)
-   print('Максимальная погрешность основной задачи: ', max_error_E, '  ', 'при x = ', x_max)
+   a = list(a)
+   a.insert(0, 0)
+   data_dop = {'x': x_main, 'a': a}
+   data = pd.DataFrame(data = data_dop)
+   data.to_csv("data_dop.csv", index=False)
+   
+   data_dop2 = {'d': d, 'fi': fi, 'A': A, 'B': B, 'C': C}
+   data = pd.DataFrame(data = data_dop2)
+   data.to_csv("data_dop2.csv", index=False)
+   #plot_test(x_main, u, v, E)
+   print('Максимальная погрешность тестовой задачи: ', max_error_E, '  ', 'при x = ', x_max)
 
 #* Коэффициенты тестовой задачи
 def test_coef(x_main, x_aux, n):
    a = np.empty(n)
-   for i in range(n):
-      if (x_main[i + 1] <= 0.3):
-         a[i] = 2.09
-      elif (x_main[i] >= 0.3):
-         a[i] = 0.09
-      elif x_main[i] < 0.3 < x_main[i + 1]:
-         a[i] = 1/(1/(2*k1(0.3)) + 1/(2*k2(0.3)))
+   for i in range(1, n + 1):
+      if (node(i - 1, n) <= 0.3 and node(i, n) <= 0.3):
+         a[i - 1] = 0.3**2 + 2
+      elif (node(i - 1, n) >= 0.3 and node(i, n) >= 0.3):
+         a[i - 1] = 0.3**2
+      elif (node(i - 1, n) < 0.3 < node(i, n)):
+         a[i - 1] = 1/(n*(0.3/2.09 - node(i - 1, n)/2.09 + node(i, n)/0.09 - 0.3/0.09))
 
    d = np.empty(n - 1)
-   for i in range(n - 1):
-      if (x_aux[i + 1] <= 0.3):
-         d[i] = 0.3
-      elif (x_aux[i] >= 0.3):
-         d[i] = 0.09
-      elif x_aux[i] < 0.3 < x_aux[i + 1]:
-         d[i] = (q1(0.3) + q2(0.3))/2
+   for i in range(1, n):
+      if (node(i - 0.5, n) <= 0.3 and node(i + 0.5, n) <= 0.3):
+         d[i - 1] = 0.3
+      elif (node(i - 0.5, n) >= 0.3 and node(i + 0.5, n) >= 0.3):
+         d[i - 1] = 0.3**2
+      elif (node(i - 0.5, n) < 0.3 < node(i + 0.5, n)):
+         d[i - 1] = n*(0.3*0.3 - 0.3*node(i - 0.5, n) + 0.09*node(i + 0.5, n) - 0.09*0.3)
 
    fi = np.empty(n - 1)
-   for i in range(n - 1):
-      if (x_aux[i + 1] <= 0.3):
-         fi[i] = 1
-      elif (x_aux[i] >= 0.3):
-         fi[i] = np.sin(0.3*np.pi)
-      elif x_aux[i] < 0.3 < x_aux[i + 1]:
-         fi[i] = (f1(0.3) + f2(0.3))/2
+   for i in range(1, n):
+      if (node(i - 0.5, n) <= 0.3 and node(i + 0.5, n) <= 0.3):
+         fi[i - 1] = 1
+      elif (node(i - 0.5, n) >= 0.3 and node(i + 0.5, n) >= 0.3):
+         fi[i - 1] = np.sin(0.3*np.pi)
+      elif node(i - 0.5, n) < 0.3 < node(i + 0.5, n):
+         fi[i - 1] = n*(0.3 - node(i - 0.5, n) + np.sin(0.3*np.pi)*node(i + 0.5, n) - np.sin(0.3*np.pi)*0.3)
    return a, d, fi
 
 #* Точное решение задачи
@@ -85,10 +96,10 @@ def true_solution(x_list):
    u1, u2, x1, x2 = [], [], [], []
    for x in x_list:
       if x <= ksi:
-         u1.append(C1*np.exp(np.sqrt(ksi/(ksi**2 + 2))*x) + C2*np.exp(-np.sqrt(ksi/(ksi**2 + 2))*x) + 1/ksi)
+         u1.append(C1*np.exp(np.sqrt(0.3/(2.09))*x) + C2*np.exp(-np.sqrt(0.3/(2.09))*x) + 1/0.3)
          x1.append(x)
       elif x >= ksi:
-         u2.append(C3*np.exp(x) + C4*np.exp(-x) + np.sin(np.pi*ksi)/0.09)
+         u2.append(C3*np.exp(x) + C4*np.exp(-x) + np.sin(np.pi*0.3)/0.09)
          x2.append(x)
    u = u1 + u2
    u[0] = my[0]
@@ -137,37 +148,37 @@ def main_task(n):
    data = pd.DataFrame(data = data_main)
    data.to_csv("data_main.csv", index=False)
 
-   plot_main(x_main, v1, v2, e)
+   #plot_main(x_main, v1, v2, e)
    print('Максимальная погрешность основной задачи: ', max_error_e, '  ', 'при x = ', x_max)
 
 #* Коэффициенты основной задачи
 def main_coef(x_main, x_aux, n):
    a = np.empty(n)
-   for i in range(n):
-      if (x_main[i + 1] <= 0.3):
-         a[i] = k1(x_aux[i])
-      elif (x_main[i] >= 0.3):
-         a[i] = k2(x_aux[i])
-      elif x_main[i] < 0.3 < x_main[i + 1]:
-         a[i] = 1/(n*(((0.3 - x_main[i + 1])/(k1((x_main[i] + 0.3)/2))) + ((x_main[i + 1] - 0.3)/(k2((0.3 + x_main[i + 1])/2)))))
+   for i in range(1, n + 1):
+      if (node(i - 1, n) <= 0.3 and node(i, n) <= 0.3):
+         a[i - 1] = k1(node(i - 0.5, n))
+      elif (node(i - 1, n ) >= 0.3 and node(i, n) >= 0.3):
+         a[i - 1] = k2(node(i - 0.5, n))
+      elif (node(i - 1, n) < 0.3 < node(i, n)):
+         a[i - 1] =(n*(((0.3 - node(i - 1, n))/(k1((node(i - 1, n) + 0.3)/2))) + ((node(i, n) - 0.3)/(k2((0.3 + node(i, n))/2)))))**(-1)
 
    d = np.empty(n - 1)
-   for i in range(n - 1):
-      if (x_aux[i + 1] <= 0.3):
-         d[i] = q1(x_main[i + 1])
-      elif (x_aux[i] >= 0.3):
-         d[i] = q2(x_main[i + 1])
-      elif x_aux[i] < 0.3 < x_aux[i + 1]:
-         d[i] = n*(q1((x_aux[i] + 0.3)/2)*(0.3 - x_aux[i]) + q2((0.3 + x_aux[i + 1])/2)*(x_aux[i + 1] - 0.3))
+   for i in range(1, n):
+      if (node(i - 0.5, n) <= 0.3 and node(i + 0.5, n) <= 0.3):
+         d[i - 1] = q1(node(i, n))
+      elif (node(i - 0.5, n) >= 0.3 and node(i + 0.5, n) >= 0.3):
+         d[i - 1] = q2(node(i, n))
+      elif (node(i - 0.5, n) < 0.3 < node(i + 0.5, n)):
+         d[i - 1] = n*(q1((node(i - 0.5, n) + 0.3)/2)*(0.3 - node(i - 0.5, n)) + q2((0.3 + node(i + 0.5, n))/2)*(node(i + 0.5, n) - 0.3))
    
    fi = np.empty(n - 1)
-   for i in range(n - 1):
-      if (x_aux[i + 1] <= 0.3):
-         fi[i] = f1(x_main[i + 1])
-      elif (x_aux[i] >= 0.3):
-         fi[i] = f2(x_main[i + 1])
-      elif x_aux[i] < 0.3 < x_aux[i + 1]:
-         fi[i] = n*(f1((x_aux[i] + 0.3)/2)*(0.3 - x_aux[i]) + f2((0.3 + x_aux[i + 1])/2)*(x_aux[i + 1] - 0.3))
+   for i in range(1, n):
+      if (node(i - 0.5, n) <= 0.3 and node(i + 0.5, n) <= 0.3):
+         fi[i - 1] = f1(node(i, n))
+      elif (node(i - 0.5, n) >= 0.3 and node(i + 0.5, n) >= 0.3):
+         fi[i - 1] = f2(node(i, n))
+      elif (node(i - 0.5, n) < 0.3 < node(i + 0.5, n)):
+         fi[i - 1] = n*(f1((node(i - 0.5, n) + 0.3)/2)*(0.3 - node(i - 0.5, n)) + f2((0.3 + node(i + 0.5, n))/2)*(node(i + 0.5, n) - 0.3))
    return a, d, fi
 
 
@@ -222,11 +233,15 @@ q2 = lambda x: x*x
 f1 = lambda x: 1
 f2 = lambda x: np.sin(np.pi*x)
 
+#* Узел
+def node(i, n):
+   return i/n
+
 #* Матричные коэффициенты
 def coef_matrix(n, a, d, fi):
-   A = np.array([a[i]/((1/n)**2) for i in range(n - 1)])
-   B = np.array([a[i]/((1/n)**2) for i in range(1, n)])
-   C = np.array([a[i]/((1/n)**2) + a[i + 1]/((1/n)**2) + d[i] for i in range(n - 1)])
+   A = np.array([a[i]*(n**2) for i in range(n - 1)])
+   B = np.array([a[i + 1]*(n**2) for i in range(n - 1)])
+   C = np.array([a[i]*(n**2) + a[i + 1]*(n**2) + d[i] for i in range(n - 1)])
    return A, B, C
 
 #* Прогонка
@@ -242,7 +257,7 @@ def progonka(n, A, B, C, a, d ,fi):
    
    #* Обратная прогонка
    y = np.empty(n)
-   y[-1] = (-kappa[1]*beta[-1] - my[1])/(kappa[1]*alfa[-1] - 1)
+   y[-1] = 0
    for i in range(n - 2, -1, -1):
       y[i] = alfa[i + 1]*y[i + 1] + beta[i + 1]
    y = list(y)

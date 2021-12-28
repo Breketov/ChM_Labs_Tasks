@@ -2,7 +2,7 @@
 # TASK_11 - - - - OK
 # TASK_3 - - - - OK
 # TASK_4 - - - - Not OK
-# TASK_5 - - - - Not OK
+# TASK_5 - - - - OK
 #
 #
 # Lab_1 - - - - OK

@@ -1,7 +1,6 @@
 #                                Лабораторная работа №2
 #                                Версия 0.6.12
-import decimal
-from math import sin
+from math import log10
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -54,37 +53,38 @@ def test_task(n):
    data_dop2 = {'d': d, 'fi': fi, 'A': A, 'B': B, 'C': C}
    data = pd.DataFrame(data = data_dop2)
    data.to_csv("data_dop2.csv", index=False)
-   #plot_test(x_main, u, v, E)
+   plot_test(x_main, u, v, E)
    print('Максимальная погрешность тестовой задачи: ', max_error_E, '  ', 'при x = ', x_max)
+   print('lg = ', -np.log10(max_error_E), 'lgn = ', np.log10(n))
 
 #* Коэффициенты тестовой задачи
 def test_coef(x_main, x_aux, n):
    a = np.empty(n)
    for i in range(1, n + 1):
-      if (node(i - 1, n) <= 0.3 and node(i, n) <= 0.3):
-         a[i - 1] = 0.3**2 + 2
-      elif (node(i - 1, n) >= 0.3 and node(i, n) >= 0.3):
-         a[i - 1] = 0.3**2
-      elif (node(i - 1, n) < 0.3 < node(i, n)):
-         a[i - 1] = 1/(n*(0.3/2.09 - node(i - 1, n)/2.09 + node(i, n)/0.09 - 0.3/0.09))
+      if (node(i - 1, n) <= ksi and node(i, n) <= ksi):
+         a[i - 1] = ksi**2 + 2
+      elif (node(i - 1, n) >= ksi and node(i, n) >= ksi):
+         a[i - 1] = ksi**2
+      elif (node(i - 1, n) < ksi < node(i, n)):
+         a[i - 1] = 1/(n*(ksi/2.09 - node(i - 1, n)/2.09 + node(i, n)/0.09 - ksi/0.09))
 
    d = np.empty(n - 1)
    for i in range(1, n):
-      if (node(i - 0.5, n) <= 0.3 and node(i + 0.5, n) <= 0.3):
-         d[i - 1] = 0.3
-      elif (node(i - 0.5, n) >= 0.3 and node(i + 0.5, n) >= 0.3):
-         d[i - 1] = 0.3**2
-      elif (node(i - 0.5, n) < 0.3 < node(i + 0.5, n)):
-         d[i - 1] = n*(0.3*0.3 - 0.3*node(i - 0.5, n) + 0.09*node(i + 0.5, n) - 0.09*0.3)
+      if (node(i - 0.5, n) <= ksi and node(i + 0.5, n) <= ksi):
+         d[i - 1] = ksi
+      elif (node(i - 0.5, n) >= ksi and node(i + 0.5, n) >= ksi):
+         d[i - 1] = ksi**2
+      elif (node(i - 0.5, n) < ksi < node(i + 0.5, n)):
+         d[i - 1] = n*(ksi*ksi - ksi*node(i - 0.5, n) + 0.09*node(i + 0.5, n) - 0.09*ksi)
 
    fi = np.empty(n - 1)
    for i in range(1, n):
-      if (node(i - 0.5, n) <= 0.3 and node(i + 0.5, n) <= 0.3):
+      if (node(i - 0.5, n) <= ksi and node(i + 0.5, n) <= ksi):
          fi[i - 1] = 1
-      elif (node(i - 0.5, n) >= 0.3 and node(i + 0.5, n) >= 0.3):
-         fi[i - 1] = np.sin(0.3*np.pi)
-      elif node(i - 0.5, n) < 0.3 < node(i + 0.5, n):
-         fi[i - 1] = n*(0.3 - node(i - 0.5, n) + np.sin(0.3*np.pi)*node(i + 0.5, n) - np.sin(0.3*np.pi)*0.3)
+      elif (node(i - 0.5, n) >= ksi and node(i + 0.5, n) >= ksi):
+         fi[i - 1] = np.sin(ksi*np.pi)
+      elif node(i - 0.5, n) < ksi < node(i + 0.5, n):
+         fi[i - 1] = n*(ksi - node(i - 0.5, n) + np.sin(ksi*np.pi)*node(i + 0.5, n) - np.sin(ksi*np.pi)*ksi)
    return a, d, fi
 
 #* Точное решение задачи
@@ -148,8 +148,9 @@ def main_task(n):
    data = pd.DataFrame(data = data_main)
    data.to_csv("data_main.csv", index=False)
 
-   #plot_main(x_main, v1, v2, e)
+   plot_main(x_main, v1, v2, e)
    print('Максимальная погрешность основной задачи: ', max_error_e, '  ', 'при x = ', x_max)
+   print('lg = ', -np.log10(max_error_e), 'lgn = ', np.log10(n/2))
 
 #* Коэффициенты основной задачи
 def main_coef(x_main, x_aux, n):

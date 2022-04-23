@@ -8,3 +8,6 @@
 # Lab_1 - - - - OK
 # Lab_2 - - - - OK
 # Lab_3 - - - - OK
+# Lab_4 - - - - Not OK
+# Lab_5 - - - - Not OK
+# Lab_6 - - - - Not Ok

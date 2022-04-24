@@ -154,7 +154,7 @@ def RK4(x0, v0, h0, Nmax):
          S.pop(-1)
          C2 = C2 + 1
          i = i - 1
-         h0 = h0/2
+         h0 = h0/4
    return n, h, x_1, v_1, v_2, S, olp, C1, C2
 
 #* Терминал
@@ -278,9 +278,3 @@ elif (zadacha == 2):
    data = pd.DataFrame(data = table)
    data.to_csv("table_lab_1.csv", index=False)
 plot()
-
-for i in range(2, len(abs_olp_)):
-   if abs_olp_[i+1] < abs_olp_[i]:
-      print(abs_olp_[i]/abs_olp_[i+1])
-   elif abs_olp_[i+1] > abs_olp_[i]:
-      print(abs_olp_[i+1]/abs_olp_[i])

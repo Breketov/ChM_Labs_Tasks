@@ -181,37 +181,6 @@ def error(X, A, B, C, D):
     data_err(err_list, F_list, S_list, X_dop)
     return err
 
-#def coef(my1, my2):
-#    """Функция для расчетов\\
-#    a - левая граница\\
-#    b - правая граница\\
-#    n - размерность сетки\\
-#    my1 - левое ГУ\\
-#    my2 - правое ГУ"""
-#    h = (b - a)/n
-#    X = [0]*(n + 1)
-#    A, B, C, D = [0]*(n + 1), [0]*(n + 1), [0]*(n + 1), [0]*(n + 1)
-#    alpha, beta = [0]*(n + 1), [0]*(n + 1)
-#    for i in range(0, n + 1):
-#        X[i] = a + i*h
-#        A[i] = f(X[i])
-#    
-#    alpha[1] = 0
-#    beta[1] = my1
-#    for i in range(1, n):
-#        alpha[i + 1] = -h/(alpha[i]*h + 4*h)
-#        beta[i + 1] = ((-6/h)*(A[i + 1] - 2*A[i] + A[i - 1]) + beta[i]*h)/(-4*h - alpha[i]*h)
-#    
-#    C[n] = my2
-#    for i in range(n, 0, -1):
-#        C[i - 1] = alpha[i]*C[i] + beta[i]
-#    
-#    for i in range(1, n + 1):
-#        B[i] = (A[i] - A[i - 1])/h + h*(2*C[i] + C[i - 1])/6
-#        D[i] = (C[i] - C[i - 1])/h
-    
-    return X, A, B, C, D
-
 #?________________ГРАФИКИ________________
 def fun_special_graf(flash, x):
     """Небольшой костыль для отрисовки графиков тестовой функции"""

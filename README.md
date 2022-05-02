@@ -9,5 +9,5 @@
 # Lab_2 - - - - OK
 # Lab_3 - - - - OK
 # Lab_4 - - - - Not OK
-# Lab_5 - - - - Not OK
-# Lab_6 - - - - Not Ok
+# Lab_5 - - - - OK
+# Lab_6 - - - - Донбас

@@ -1,7 +1,7 @@
 from numpy import sqrt, sin, cos, pi, array, log
 import matplotlib.pyplot as plt
 import pandas as pd
-from sklearn.metrics import max_error
+import time
 
 #?________________ОСНОВНЫЕ_ЗАДАЧИ_И_СПЛАЙН________________
 def f(x):
@@ -14,7 +14,8 @@ def f(x):
     
     'MAIN_21' - Основная осцилирующая 1\\
     'MAIN_22' - Основная осцилирующая 2\\
-    'MAIN_23' - Основная осцилирующая 3"""
+    'MAIN_23' - Основная осцилирующая 3
+    """
     # TODO Тестовая задача
     if funcflag == 'TEST_1':
         if -1 <= x <= 0:
@@ -48,7 +49,8 @@ def df(x):
     
     'MAIN_21' - Основная осцилирующая 1\\
     'MAIN_22' - Основная осцилирующая 2\\
-    'MAIN_23' - Основная осцилирующая 3"""
+    'MAIN_23' - Основная осцилирующая 3
+    """
     # TODO Тестовая задача
     if funcflag == 'TEST_1':
         if -1 <= x <= 0:
@@ -82,7 +84,8 @@ def ddf(x):
     
     'MAIN_21' - Основная осцилирующая 1\\
     'MAIN_22' - Основная осцилирующая 2\\
-    'MAIN_23' - Основная осцилирующая 3"""
+    'MAIN_23' - Основная осцилирующая 3
+    """
     # TODO Тестовая задача
     if funcflag == 'TEST_1':
         if -1 <= x <= 0:
@@ -107,26 +110,30 @@ def ddf(x):
         return ((1/((x + 1)**2) - 1/(x + 1))*(x**2) - 2*x*(x/(x + 1) - log(x + 1)))/(x**4) - 100*cos(10*x)
 
 def spline(a, b, c, d, X, x):
-    """Каноническая запись сплайна"""
+    """Каноническая запись сплайна
+    """
     for i in range(1, n + 1):
         if X[i - 1] <= x <= X[i]:
             return a[i] + b[i]*(x - X[i]) + 0.5*c[i]*(x - X[i])**2 + (d[i]/6)*(x - X[i])**3
 
 def dspline(b, c, d, X, x):
-    """Первая производная сплайна"""
+    """Первая производная сплайна
+    """
     for i in range(1, n + 1):
         if X[i - 1] <= x <= X[i]:
             return b[i] + c[i]*(x - X[i]) + (d[i]/2)*(x - X[i])**2
 
 def ddspline(c, d, X, x):
-    """Вторая производная сплайна"""
+    """Вторая производная сплайна
+    """
     for i in range(1, n + 1):
         if X[i - 1] <= x <= X[i]:
             return c[i] + d[i]*(x - X[i])
 
 #?________________РАСЧЕТЫ________________
 def error(X, A, B, C, D):
-    """Функция нахождения максимальной ошибки в точке и нахождения всех погрешностей"""
+    """Функция нахождения максимальной ошибки в точке и нахождения всех погрешностей
+    """
     N = 2*n
     h = (b - a)/N
     X_dop = []
@@ -153,7 +160,7 @@ def error(X, A, B, C, D):
         if err > max_error:
             max_error = err
             x_max_error = i
-        
+    
         tmp = df(i)
         spl = dspline(B, C, D, X, i)
         err = abs(tmp - spl)
@@ -183,7 +190,8 @@ def error(X, A, B, C, D):
 
 #?________________ГРАФИКИ________________
 def fun_special_graf(flash, x):
-    """Небольшой костыль для отрисовки графиков тестовой функции"""
+    """Небольшой костыль для отрисовки графиков тестовой функции
+    """
     X = []
     if flash == 0:
         for i in range(len(x)):
@@ -200,34 +208,31 @@ def fun_special_graf(flash, x):
     return X
 
 def graf(x, y):
-    """Функция отрисовки и сохранения графиков для всех задач"""
+    """Функция отрисовки и сохранения графиков для всех задач
+    """
     fig = plt.figure(figsize=(12,5))
     data1 = pd.read_csv('table_error1.csv')
     data2 = pd.read_csv('table_error2.csv')
     data3 = pd.read_csv('table_error3.csv')
-    S_x = data1['x[j]']
-    S_y = data1['S[xj]']
-    dS_y = data2["S'[xj]"]
-    ddS_y = data3["S''[xj]"]
 
     if funcflag == 'TEST_1':
         plt.subplot(1, 3, 1)
         plt.plot(x, y, marker='.')
-        plt.plot(S_x, S_y)
+        plt.plot(data1['x[j]'], data1['S[xj]'])
         plt.grid()
         plt.title("Функция")
 
         y = fun_special_graf(0, x)
         plt.subplot(1, 3, 2)
         plt.plot(x, y, marker='.')
-        plt.plot(S_x, dS_y)
+        plt.plot(data1['x[j]'], data2["S'[xj]"])
         plt.grid()
         plt.title("Первая производная")
 
         y = fun_special_graf(1, x)
         plt.subplot(1, 3, 3)
         plt.plot(x, y, marker='.')
-        plt.plot(S_x, ddS_y)
+        plt.plot(data1['x[j]'], data3["S''[xj]"])
         plt.grid()
         plt.title("Вторая производная")
 
@@ -236,21 +241,21 @@ def graf(x, y):
     else:
         plt.subplot(1, 3, 1)
         plt.plot(x, y, marker='.')
-        plt.plot(S_x, S_y)
+        plt.plot(data1['x[j]'], data1['S[xj]'])
         plt.grid()
         plt.title("Функция")
 
         y = df(array(x))
         plt.subplot(1, 3, 2)
         plt.plot(x, y, marker='.')
-        plt.plot(S_x, dS_y)
+        plt.plot(data1['x[j]'], data2["S'[xj]"])
         plt.grid()
         plt.title("Первая производная")
 
         y = ddf(array(x))
         plt.subplot(1, 3, 3)
         plt.plot(x, y, marker='.')
-        plt.plot(S_x, ddS_y)
+        plt.plot(data1['x[j]'], data3["S''[xj]"])
         plt.grid()
         plt.title("Вторая производная")
 
@@ -259,7 +264,8 @@ def graf(x, y):
 
 #?________________ДАТАФРЕЙМЫ________________
 def data(X, A, B, C, D):
-    """Создание таблиц с данными по текущей задачи, принимает подсчитанные коэффициенты из функции main"""
+    """Создание таблиц с данными по текущей задачи, принимает подсчитанные коэффициенты из функции main
+    """
     table = pd.DataFrame(data = {})
     for i in range(1, len(X)):
         row = {'i': i, 'X[i-1]': round(X[i - 1], 10), 'X[i]': round(X[i], 10), 'a[i]': round(A[i], 10), 
@@ -268,25 +274,26 @@ def data(X, A, B, C, D):
     table.to_csv('table_task.csv', index=False)
 
 def data_err(error_list, F_list, S_list, X):
-    """Создание таблиц с данными по производным, принимает подсчитанные коэффициенты из функции coef"""
+    """Создание таблиц с данными по производным, принимает подсчитанные коэффициенты из функции coef
+    """
     table_err1 = pd.DataFrame(data = {})
-    for j in range(0, len(X) - 1):
-        row = {'j': j, 'x[j]': round(X[j], 10), 'F[xj]': round(F_list[0][j], 10), 
-        'S[xj]': round(S_list[0][j], 10), 'F[xj] - S[xj]': error_list[0][j]}
+    for j in range(0, len(X)):
+        row = {'j': j, 'x[j]': round(X[j], 10), 'F[xj]': F_list[0][j], 
+        'S[xj]': S_list[0][j], 'F[xj] - S[xj]': error_list[0][j]}
         table_err1 = table_err1.append(row, ignore_index=True)
     table_err1.to_csv('table_error1.csv', index=False)
 
     table_err2 = pd.DataFrame(data = {})
-    for j in range(0, len(X) - 1):
-        row = {'j': j, 'x[j]': round(X[j], 10), "F'[xj]": round(F_list[1][j], 10), 
-        "S'[xj]": round(S_list[1][j], 10),  "F'[xj] - S'[xj]": error_list[1][j]}
+    for j in range(0, len(X)):
+        row = {'j': j, 'x[j]': round(X[j], 10), "F'[xj]": F_list[1][j], 
+        "S'[xj]": S_list[1][j],  "F'[xj] - S'[xj]": error_list[1][j]}
         table_err2 = table_err2.append(row, ignore_index=True)
     table_err2.to_csv('table_error2.csv', index=False)
 
     table_err3 = pd.DataFrame(data = {})
-    for j in range(0, len(X) - 1):
-        row = {'j': j, 'x[j]': round(X[j], 10), "F''[xj]": round(F_list[2][j], 10), 
-        "S''[xj]": round(S_list[2][j], 10),  "F''[xj] - S''[xj]": error_list[2][j]}
+    for j in range(0, len(X)):
+        row = {'j': j, 'x[j]': round(X[j], 10), "F''[xj]": F_list[2][j], 
+        "S''[xj]": S_list[2][j],  "F''[xj] - S''[xj]": error_list[2][j]}
         table_err3 = table_err3.append(row, ignore_index=True)
     table_err3.to_csv('table_error3.csv', index=False)
 
@@ -295,9 +302,9 @@ def main():
     """Принимает данные из протоинтерфейса и является основной функцией запуска программы на счет\\
     Ничего не принимает, так как интерфейс создает глобальные переменные\\
     \\
-    Сама по себе функция считает ключевые коэффициенты A, B, C, D"""
+    Сама по себе функция считает ключевые коэффициенты A, B, C, D
+    """
 
-    my1, my2 = 0, 0
     h = (b - a)/n
     X = [0]*(n + 1)
     A, B, C, D = [0]*(n + 1), [0]*(n + 1), [0]*(n + 1), [0]*(n + 1)
@@ -307,17 +314,17 @@ def main():
         A[i] = f(X[i])
     
     alpha[1] = 0
-    beta[1] = my1
+    beta[1] = 0
     for i in range(1, n):
         alpha[i + 1] = -h/(alpha[i]*h + 4*h)
-        beta[i + 1] = ((-6/h)*(A[i + 1] - 2*A[i] + A[i - 1]) + beta[i]*h)/(-4*h - alpha[i]*h)
+        beta[i + 1] = ((6/h)*(A[i + 1] - 2*A[i] + A[i - 1]) - beta[i]*h)/(4*h + alpha[i]*h)
     
-    C[n] = my2
+    C[n] = 0
     for i in range(n, 0, -1):
         C[i - 1] = alpha[i]*C[i] + beta[i]
     
     for i in range(1, n + 1):
-        B[i] = (A[i] - A[i - 1])/h + h*(2*C[i] + C[i - 1])/6
+        B[i] = (A[i] - A[i - 1])/h + C[i]*h/3 + C[i - 1]*h/6
         D[i] = (C[i] - C[i - 1])/h
     
     data(X, A, B, C, D)
@@ -327,16 +334,17 @@ def main():
 
     print('-----------------------------------------------------------------------------------------------')
     print('СПРАВКА')
-    print('Максимальная ошибка:', err[0], '     в точке x =', err[1])
-    print('Максимальная ошибка первой производной:', err[2], '     в точке x =', err[3])
-    print('Максимальная ошибка второй производной:', err[4], '     в точке x =', err[5])
-
+    print('Сетка сплайна: n = ', n)
+    print('Контрольная сетка: N = ', 2*n)
+    print('Максимальная ошибка на контрольной сетке:', err[0], '     в точке x =', err[1])
+    print('Максимальная ошибка первой производной на контрольной сетке:', err[2], '     в точке x =', err[3])
+    print('Максимальная ошибка второй производной на контрольной сетке:', err[4], '     в точке x =', err[5])
+    print('--------------------------------------------------------')
 
 #?________________ТИПО_ИНТЕРФЕЙС________________
-#Тут будет интерфейс типо
 print('_____________________________________________________________________________________________________________________')
 print('Команда Эльвина | Лабораторная работа №2 | Построение интерполирующего кубического сплайна')
-print('_____________________________________________________________________________________________________________________')
+print('___________________________1__________________________________________________________________________________________')
 print('Выберите тип задачи:')
 print('Тестовая - 0')
 print('----------------------------')
@@ -379,4 +387,7 @@ elif (task == 6):
    a = 2
    b = 4
 
+start_time = time.time()
 main()
+print('Время работы программы:', time.time() - start_time)
+print('-----------------------------------------------------------------------------------------------')

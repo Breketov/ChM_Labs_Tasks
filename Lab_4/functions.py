@@ -29,7 +29,7 @@ def f_lamn(h, k, n, m):
 
 def tau(S, k, lam1, lamn):
 	s = S % k
-	return 1/((lam1 + lamn)*0.5 + 0.5*((lamn - lam1)*cos(0.5*pi*(1 + 2*s)/k)))
+	return 2/((lam1 + lamn) + (lamn - lam1)*cos((pi*(2*s - 1))/(2*k)))
 
 #* Подсчет ошибок
 def error_test(m, n, U, V, R):
@@ -43,7 +43,7 @@ def error_test(m, n, U, V, R):
                 error_i = i
                 error_j = j
             nev += R[i][j]**2
-    return sqrt(nev), R[1][1], [max_eps, error_i, error_j]
+    return sqrt(nev), [max_eps, error_i, error_j]
 
 def error_main(m, n, V1, V2, R1, R2):
     max_eps = 0
@@ -57,7 +57,7 @@ def error_main(m, n, V1, V2, R1, R2):
                 error_j = j
             nev1 += R1[i][j]**2
             nev2 += R2[i][j]**2
-    return [sqrt(nev1), sqrt(nev2)], [R1[1][1], R2[1][1]], [max_eps, error_i, error_j]
+    return [sqrt(nev1), sqrt(nev2)], [max_eps, error_i, error_j]
 
 #* Отрисовываем графики
 def graf(x, y, u):
@@ -220,7 +220,7 @@ def solve(n , m, eps, Nmax, cheb, omega, part):
                 v_old = V[i][j]
                 if part == 1:
                     v_new = -omega*(h2*(V[i][j + 1] + V[i][j - 1]) + k2*(V[i + 1][j] + V[i - 1][j])) 
-                    v_new = v_new + (1 - omega)*A*V[i][j] - omega*ft(xi[j], yj[i]) 
+                    v_new = v_new + (1 - omega)*A*V[i][j] - omega*f(xi[j], yj[i]) 
                     v_new = v_new/A
                 elif part == 2:
                     v_new = v_old + tau(S, cheb, lam1, lamn)*R[i][j]

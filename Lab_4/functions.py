@@ -69,7 +69,7 @@ def graf(x, y, u):
     plt.show()
 
 #* Решение тестовой
-def solve_test(n , m, eps, Nmax, cheb):
+def solve_test(n , m, eps, Nmax, cheb, omega, part):
     U, V, R, Z = [], [], [], []
     a, c = -1, -1
     b, d = 1, 1
@@ -81,9 +81,10 @@ def solve_test(n , m, eps, Nmax, cheb):
     h2 = 1/(h**2)
     k2 = 1/(k**2)
     A = -2*(h2 + k2)
-
+    
     lam1 = f_lam1(h, k, n, m)
     lamn = f_lamn(h, k, n, m)
+    tau_MPI = 2/(lam1 + lamn)
     #* Заполняем массивы
     #-----------------------------------------#
     for i in range(0, m + 1):
@@ -121,7 +122,14 @@ def solve_test(n , m, eps, Nmax, cheb):
         for i in range (1, m):
             for j in range (1, n):
                 v_old = V[i][j]
-                v_new = v_old + tau(S, cheb, lam1, lamn)*R[i][j]
+                if part == 1:
+                    v_new = -omega*(h2*(V[i][j + 1] + V[i][j - 1]) + k2*(V[i + 1][j] + V[i - 1][j])) 
+                    v_new = v_new + (1 - omega)*A*V[i][j] - omega*ft(xi[j], yj[i]) 
+                    v_new = v_new/A
+                elif part == 2:
+                    v_new = v_old + tau(S, cheb, lam1, lamn)*R[i][j]
+                else:
+                    v_new=v_old + tau_MPI*R[i][j]
 
                 eps_cur = abs(v_old - v_new) 
                 if(eps_cur > eps_max):
@@ -156,7 +164,7 @@ def solve_test(n , m, eps, Nmax, cheb):
     print('---------------------------------------------------------------------------------------------------')
 
 #* Решение основной
-def solve(n , m, eps, Nmax, cheb):
+def solve(n , m, eps, Nmax, cheb, omega, part):
     V, R = [], []
     a, c = -1, -1
     b, d = 1, 1
@@ -172,6 +180,8 @@ def solve(n , m, eps, Nmax, cheb):
 
     lam1 = f_lam1(h, k, n, m)
     lamn = f_lamn(h, k, n, m)
+    tau_MPI = 2/(lam1 + lamn)
+
     #* Заполняем массивы
     #-----------------------------------------#
     for i in range(0, m + 1):
@@ -208,7 +218,14 @@ def solve(n , m, eps, Nmax, cheb):
         for i in range (1, m):
             for j in range (1, n):
                 v_old = V[i][j]
-                v_new = v_old + tau(S, cheb, lam1, lamn)*R[i][j]
+                if part == 1:
+                    v_new = -omega*(h2*(V[i][j + 1] + V[i][j - 1]) + k2*(V[i + 1][j] + V[i - 1][j])) 
+                    v_new = v_new + (1 - omega)*A*V[i][j] - omega*ft(xi[j], yj[i]) 
+                    v_new = v_new/A
+                elif part == 2:
+                    v_new = v_old + tau(S, cheb, lam1, lamn)*R[i][j]
+                else:
+                    v_new=v_old + tau_MPI*R[i][j]
 
                 eps_cur = abs(v_old - v_new) 
                 if(eps_cur > eps_max):
@@ -222,15 +239,15 @@ def solve(n , m, eps, Nmax, cheb):
 
     return V, R, S, eps_max, h
 
-def task_main(n , m, eps, Nmax, cheb):
+def task_main(n , m, eps, Nmax, cheb, omg, part):
     Z = []
     for i in range(0, m + 1):
         Z.append([])
         for j in range(0, n + 1):
             Z[i].append(0)
 
-    V1, R1, S1, eps_max1, point1 = solve(n , m, eps, Nmax, cheb)
-    V2, R2, S2, eps_max2, point2 = solve(int(2*n) , int(2*m), eps, Nmax, cheb)
+    V1, R1, S1, eps_max1, point1 = solve(n , m, eps, Nmax, cheb, omg, part)
+    V2, R2, S2, eps_max2, point2 = solve(int(2*n) , int(2*m), eps, Nmax, cheb, omg, part)
     for i in range(0, m + 1):
         for j in range(0, n + 1):
             Z[i][j] = V1[i][j] - V2[2*i][2*j]

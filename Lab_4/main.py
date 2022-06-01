@@ -1,14 +1,13 @@
-import functions as func
-
-def main(n , m, eps, Nmax, cheb, omg, task, part):
+import standard as std
+import not_standart as nstd
+cheb, omg = 0, 0
+def main(n , m, eps, Nmax, task, part, cheb, omg):
     if task == 0:
-        func.solve_test(n , m, eps, Nmax, cheb, omg, part)
+        std.solve_test(n , m, eps, Nmax, cheb, omg, part)
     elif task == 1:
-        func.task_main(n , m, eps, Nmax, cheb, omg, part)
+        std.task_main(n , m, eps, Nmax, cheb, omg, part)
 
 if __name__ == "__main__":
-    cheb = 0
-    omg = 0
     print('_____________________________________________________________________________________________________________________')
     print('Команда Эльвина | Лабораторная работа №1 | Решение задачи Дирихле для уравнения Пуассона')
     print('Выберите ступень:')
@@ -45,4 +44,4 @@ if __name__ == "__main__":
     print('Введите число шаго Nmax:')
     Nmax = int(input('Nmax = '))
     print('---------------------------------------------------------------------------------------------------')
-    main(n , m, eps, Nmax, cheb, omg, task, part)
+    main(n , m, eps, Nmax, task, part, cheb, omg)

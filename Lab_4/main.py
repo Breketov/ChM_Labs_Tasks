@@ -1,11 +1,15 @@
 import standard as std
 import not_standart as nstd
-cheb, omg = 0, 0
+cheb, omg, task = 0, 0, 'task'
+
 def main(n , m, eps, Nmax, task, part, cheb, omg):
-    if task == 0:
-        std.solve_test(n , m, eps, Nmax, cheb, omg, part)
-    elif task == 1:
-        std.task_main(n , m, eps, Nmax, cheb, omg, part)
+    if part == 1 or part == 2:
+        if task == 0:
+            std.solve_test(n , m, eps, Nmax, cheb, omg, part)
+        elif task == 1:
+            std.task_main(n , m, eps, Nmax, cheb, omg, part)
+    else:
+        nstd.solve_test(n, m, eps, Nmax)
 
 if __name__ == "__main__":
     print('_____________________________________________________________________________________________________________________')
@@ -24,18 +28,28 @@ if __name__ == "__main__":
         print('Вивас Каролина  | Ступенька №3 | Метод простой итерации на стандартной области')
         print('Катранов Кирилл | Ступенька №3 | Метод простой итерации на нестандартной области')
     print('_____________________________________________________________________________________________________________________')
-    print('Введите все необходимые данные')
-    print('Выберите задачу:')
-    print('Тестовая - 0')
-    print('Основная - 1')
-    print('----------------------------')
-    task = int(input('Задача: '))
+    if part == 1 or part == 2:
+        print('Введите все необходимые данные')
+        print('Выберите задачу:')
+        print('Тестовая - 0')
+        print('Основная - 1')
+        print('----------------------------')
+        task = int(input('Задача: '))
+    else:
+        print('Решается тестовая задача')
     print('Введите размерность сетки:')
     n = int(input('Разбиение по x: n = '))
     m = int(input('Разбиение по x: m = '))
     if part == 1:
-        print('Введите параметр релаксации (0, 2):')
-        omg = float(input('omega = '))
+        if task == 0:
+            print('Введите параметр релаксации (0, 2):')
+            omg = float(input('omega = '))
+        elif task == 1:
+            print('Введите параметр релаксации (0, 2) для обычной сетки:')
+            omg1 = float(input('omega1 = '))
+            print('Введите параметр релаксации (0, 2) для контрольной сетки:')
+            omg2 = float(input('omega2 = '))
+            omg = [omg1, omg2]
     elif part == 2:
         print('Введите параметр метода k (натуральное число):')
         cheb = int(input('k = '))

@@ -26,12 +26,42 @@ def f_lamn(h, k, n, m):
 
 def tau(S, k, lam1, lamn):
 	s = S % k
-	return 2/((lam1 + lamn) + (lamn - lam1)*cos((pi*(2*s + 1))/(2*k)))
+	return 2/((lam1 + lamn) + (lamn - lam1)*cos((pi*(2*s - 1))/(2*k)))
 
-def graf(x, y, z):
+def graf_std(x, y, z):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     x, y = np.meshgrid(x, y)
     z = array(z)
     ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap='inferno')
     plt.show()
+
+def graf_nst(a, c, h, k, m, n, Z):
+    x1 = [a + i*h for i in range(0, int(n/2) + 1)]
+    y1 = [c + j*k for j in range(0, int(m/2) + 1)]
+    x2 = [a + i*h for i in range(0, n + 1)]
+    y2 = [c + j*k for j in range(int(m/2), m + 1)]
+
+    z1, z2 = [], []
+    for i in range(0, int(m/2) + 1):
+        if i == int(m/2):
+            z1.append([])
+            for j in range(0, int(n/2) + 1):
+                z1[i].append(Z[i][j])
+        else:
+            z1.append(Z[i])
+
+    for i in range(int(m/2), m + 1):
+        z2.append(Z[i])
+    
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    x1, y1 = np.meshgrid(x1, y1)
+    x2, y2 = np.meshgrid(x2, y2)
+    z1 = array(z1)
+    z2 = array(z2)
+    ax.plot_surface(x1, y1, z1, rstride=1, cstride=1, cmap='inferno')
+    ax.plot_surface(x2, y2, z2, rstride=1, cstride=1, cmap='inferno')
+    plt.show()
+
+

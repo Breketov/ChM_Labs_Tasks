@@ -1,5 +1,5 @@
 import numpy as np
-from numpy import exp, sin, cos, sqrt, pi, array, max
+from numpy import exp, sin, cos, sqrt, pi, array, max, abs
 import matplotlib.pyplot as plt
 import pandas as pd
 

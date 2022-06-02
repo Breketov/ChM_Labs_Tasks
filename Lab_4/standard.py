@@ -49,11 +49,7 @@ def solve_test(n , m, eps, Nmax, cheb, omega, part):
     S = 0
     while (True):
         if (S == 1):
-            nev0 = 0
-            for i in range(0, m + 1):
-                for j in range(0, n + 1):
-                    nev0 = nev0 + R[i][j]*R[i][j]
-            nev0 = sqrt(nev0)
+            nev0 = np.max(np.abs(R))
 
         eps_max = 0 
         for i in range(1, m):
@@ -82,7 +78,7 @@ def solve_test(n , m, eps, Nmax, cheb, omega, part):
     
     #* Подсчет невязки и фрейма ошибок
     #-----------------------------------------#
-    nevN, max_Z = 0, 0
+    max_Z = 0
     for i in range(0, m + 1):
         for j in range(0, n + 1):
             Z[i][j] = abs(U[i][j] - V[i][j])
@@ -90,7 +86,7 @@ def solve_test(n , m, eps, Nmax, cheb, omega, part):
                 max_Z = Z[i][j]
                 err_i = i
                 err_j = j
-            nevN += R[i][j]**2
+    nevN = np.max(np.abs(R))
     
     #* Отрисовка графиков и создание таблиц + вывод справки
     #-----------------------------------------#
@@ -163,11 +159,7 @@ def task_main(n , m, eps, Nmax, cheb, omg, part):
         S, nevN = 0, 0
         while (True):
             if (S == 1):
-                nev0 = 0
-                for i in range(0, m + 1):
-                    for j in range(0, n + 1):
-                        nev0 = nev0 + R[i][j]*R[i][j]
-                nev0 = sqrt(nev0)
+                nev0 = np.max(np.abs(R))
 
             eps_max = 0 
             for i in range(1, m):
@@ -194,9 +186,7 @@ def task_main(n , m, eps, Nmax, cheb, omg, part):
                 S -= 1
                 break
             
-        for i in range(0, m + 1):
-            for j in range(0, n + 1):
-                nevN += R[i][j]**2
+        nevN = np.max(np.abs(R))
         return V, nevN, S, eps_max, nev0, grid
 
     if part == 1:
@@ -225,7 +215,7 @@ def task_main(n , m, eps, Nmax, cheb, omg, part):
                 max_Z = Z[i][j]
                 err_i = i
                 err_j = j
-
+    
     #* Отрисовка графиков и создание таблиц + вывод справки
     #-----------------------------------------#
     data = pd.DataFrame(V1)
@@ -265,15 +255,15 @@ def task_main(n , m, eps, Nmax, cheb, omg, part):
 Для множественного тестирования
 """
 #!solve_test(n , m, eps, Nmax, cheb, omega, part)
-#solve_test(5 , 5, 0.00001, 10000, 7, 1.8, 2)
-#solve_test(10, 10, 0.00001, 10000, 7, 1.8, 2)
-#solve_test(20, 20, 0.00001, 10000, 7, 1.8, 2)
-#solve_test(40, 40, 0.00001, 10000, 7, 1.8, 2)
-#solve_test(80, 80, 0.00001, 10000, 7, 1.8, 2)
+#solve_test(5, 5, 0.00001,          100000, 7, 1.8, 2)
+#solve_test(10, 10, 0.000001,       100000, 7, 1.8, 2)
+#solve_test(20, 20, 0.0000001,      100000, 7, 1.8, 2)
+#solve_test(40, 40, 0.00000001,     100000, 7, 1.8, 2)
+#solve_test(80, 80, 0.000000001,    100000, 7, 1.8, 2)
 
 #!solve_main(n , m, eps, Nmax, cheb, omega, part)
-#solve_main(5 , 5, 0.00001, 10000, 7, 1.8, 2)
-#solve_main(10, 10, 0.00001, 10000, 7, 1.8, 2)
-#solve_main(20, 20, 0.00001, 10000, 7, 1.8, 2)
-#solve_main(40, 40, 0.00001, 10000, 7, 1.8, 2)
-#solve_main(80, 80, 0.00001, 10000, 7, 1.8, 2)
+#solve_main(5, 5, 0.00001,          100000, 7, 1.8, 2)
+#solve_main(10, 10, 0.000001,       100000, 7, 1.8, 2)
+#solve_main(20, 20, 0.0000001,      100000, 7, 1.8, 2)
+#solve_main(40, 40, 0.00000001,     100000, 7, 1.8, 2)
+#solve_main(80, 80, 0.000000001,    100000, 7, 1.8, 2)

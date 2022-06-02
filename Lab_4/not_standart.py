@@ -65,14 +65,7 @@ def solve_test_Nan(n, m, eps, Nmax):
     S = 0
     while (True):
         if (S == 1):
-            nev0 = 0
-            for i in range(0, m + 1):
-                for j in range(0, int(n/2) + 1):
-                    nev0 = nev0 + R[i][j]*R[i][j]
-            for i in range(int(m/2), m + 1):
-                for j in range(int(n/2) + 1, n + 1):
-                    nev0 = nev0 + R[i][j]*R[i][j]
-            nev0 = sqrt(nev0)
+            nev0 = np.max(np.abs(R))
 
         eps_max = 0 
         #for i in range(1, m):
@@ -138,7 +131,7 @@ def solve_test_Nan(n, m, eps, Nmax):
     
     #* Подсчет невязки и фрейма ошибок
     #-----------------------------------------#
-    nevN, max_Z = 0, 0
+    max_Z = 0
     for i in range(1, m):
         j = 1
         if i < int(m/2) + 1:
@@ -148,7 +141,6 @@ def solve_test_Nan(n, m, eps, Nmax):
                     max_Z = Z[i][j]
                     err_i = i
                     err_j = j
-                nevN += R[i][j]**2
                 j += 1
         else:
             while j < n:
@@ -157,9 +149,8 @@ def solve_test_Nan(n, m, eps, Nmax):
                     max_Z = Z[i][j]
                     err_i = i
                     err_j = j
-                nevN += R[i][j]**2
                 j += 1
-
+    nevN = np.max(np.abs(R))
     #for i in range(0, m + 1):
     #    for j in range(0, int(n/2) + 1):
     #        Z[i][j] = abs(U[i][j] - V[i][j])
@@ -167,7 +158,6 @@ def solve_test_Nan(n, m, eps, Nmax):
     #            max_Z = Z[i][j]
     #            err_i = i
     #            err_j = j
-    #        nevN += R[i][j]**2
     #
     #for i in range(int(m/2), m + 1):
     #    for j in range(int(n/2) + 1, n + 1):
@@ -176,7 +166,7 @@ def solve_test_Nan(n, m, eps, Nmax):
     #            max_Z = Z[i][j]
     #            err_i = i
     #            err_j = j
-    #        nevN += R[i][j]**2
+    #nevN = np.max(np.abs(R))
     
     #* Отрисовка графиков и создание таблиц + вывод справки
     #-----------------------------------------#
@@ -195,7 +185,7 @@ def solve_test_Nan(n, m, eps, Nmax):
     print('Параметр tau = ', round(tau_MPI, 7))
     print('Число итераций N: ', S)
     print('Точность на шаге N: ', eps_max)
-    print('Невязка N: ', sqrt(nevN))
+    print('Невязка N: ', nevN)
     print('Невязка начального приближения: ', nev0)
     print('Максимальная погрешность: ', max_Z, 'В точке: ', [round(xi[err_i], 5), round(yj[err_j], 5)])
     print('---------------------------------------------------------------------------------------------------')
@@ -264,14 +254,7 @@ def solve_test_0(n, m, eps, Nmax):
     S = 0
     while (True):
         if (S == 1):
-            nev0 = 0
-            for i in range(0, m + 1):
-                for j in range(0, int(n/2) + 1):
-                    nev0 = nev0 + R[i][j]*R[i][j]
-            for i in range(int(m/2), m + 1):
-                for j in range(int(n/2) + 1, n + 1):
-                    nev0 = nev0 + R[i][j]*R[i][j]
-            nev0 = sqrt(nev0)
+            nev0 = np.max(np.abs(R))
 
         eps_max = 0 
         #for i in range(1, m):
@@ -347,7 +330,6 @@ def solve_test_0(n, m, eps, Nmax):
                     max_Z = Z[i][j]
                     err_i = i
                     err_j = j
-                nevN += R[i][j]**2
                 j += 1
         else:
             while j < n:
@@ -356,9 +338,8 @@ def solve_test_0(n, m, eps, Nmax):
                     max_Z = Z[i][j]
                     err_i = i
                     err_j = j
-                nevN += R[i][j]**2
                 j += 1
-
+    nevN = np.max(np.abs(R))
     #for i in range(0, m + 1):
     #    for j in range(0, int(n/2) + 1):
     #        Z[i][j] = abs(U[i][j] - V[i][j])
@@ -366,7 +347,6 @@ def solve_test_0(n, m, eps, Nmax):
     #            max_Z = Z[i][j]
     #            err_i = i
     #            err_j = j
-    #        nevN += R[i][j]**2
     #
     #for i in range(int(m/2), m + 1):
     #    for j in range(int(n/2) + 1, n + 1):
@@ -375,13 +355,13 @@ def solve_test_0(n, m, eps, Nmax):
     #            max_Z = Z[i][j]
     #            err_i = i
     #            err_j = j
-    #        nevN += R[i][j]**2
-    
+    #nevN = np.max(np.abs(R))
+
     #* Отрисовка графиков и создание таблиц + вывод справки
     #-----------------------------------------#
-    #graf_nst_0(a, c, h, k, m, n, U)
-    #graf_nst_0(a, c, h, k, m, n, V)
-    #graf_nst_0(a, c, h, k, m, n, Z)
+    graf_nst_0(a, c, h, k, m, n, U)
+    graf_nst_0(a, c, h, k, m, n, V)
+    graf_nst_0(a, c, h, k, m, n, Z)
 
     data = pd.DataFrame(U)
     data.to_csv("data_u_test.csv", index=False)
@@ -394,7 +374,7 @@ def solve_test_0(n, m, eps, Nmax):
     print('Параметр tau = ', round(tau_MPI, 7))
     print('Число итераций N: ', S)
     print('Точность на шаге N: ', eps_max)
-    print('Невязка N: ', sqrt(nevN))
+    print('Невязка N: ', nevN)
     print('Невязка начального приближения: ', nev0)
     print('Максимальная погрешность: ', max_Z, 'В точке: ', [round(xi[err_i], 5), round(yj[err_j], 5)])
     print('---------------------------------------------------------------------------------------------------')
@@ -404,15 +384,15 @@ def solve_test_0(n, m, eps, Nmax):
 Для множественного тестирования
 """
 #!solve_test_0(n, m, eps, Nmax)
-#solve_test_0(5, 5, 0.00001, 10000)
-#solve_test_0(10, 10, 0.00001, 10000)
-#solve_test_0(20, 20, 0.00001, 10000)
-#solve_test_0(40, 40, 0.00001, 10000)
-#solve_test_0(80, 80, 0.00001, 10000)
+#solve_test_0(5, 5, 0.00001,        100000)
+#solve_test_0(10, 10, 0.000001,     100000)
+#solve_test_0(20, 20, 0.0000001,    100000)
+#solve_test_0(40, 40, 0.00000001,   100000)
+#solve_test_0(80, 80, 0.000000001,  100000)
 
 #!solve_test_Nan(n, m, eps, Nmax)
-#solve_test_Nan(5, 5, 0.00001, 10000)
-#solve_test_Nan(10, 10, 0.00001, 10000)
-#solve_test_Nan(20, 20, 0.00001, 10000)
-#solve_test_Nan(40, 40, 0.00001, 10000)
-#solve_test_Nan(80, 80, 0.00001, 10000)
+#solve_test_Nan(5, 5, 0.00001,       100000)
+#solve_test_Nan(10, 10, 0.000001,    100000)
+#solve_test_Nan(20, 20, 0.0000001,   100000)
+#solve_test_Nan(40, 40, 0.00000001,  100000)
+#solve_test_Nan(80, 80, 0.000000001, 100000)

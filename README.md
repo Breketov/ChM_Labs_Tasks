@@ -8,6 +8,6 @@
 # Lab_1 - - - - OK
 # Lab_2 - - - - OK
 # Lab_3 - - - - OK
-# Lab_4 - - - - Not OK
+# Lab_4 - - - - OK
 # Lab_5 - - - - OK
 # Lab_6 - - - - Донбас

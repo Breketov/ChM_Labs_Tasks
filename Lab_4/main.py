@@ -9,7 +9,8 @@ def main(n , m, eps, Nmax, task, part, cheb, omg):
         elif task == 1:
             std.task_main(n , m, eps, Nmax, cheb, omg, part)
     else:
-        nstd.solve_test(n, m, eps, Nmax)
+        #nstd.solve_test_Nan(n, m, eps, Nmax)
+        nstd.solve_test_0(n, m, eps, Nmax)
 
 if __name__ == "__main__":
     print('_____________________________________________________________________________________________________________________')

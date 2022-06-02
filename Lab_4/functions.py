@@ -36,7 +36,7 @@ def graf_std(x, y, z):
     ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap='inferno')
     plt.show()
 
-def graf_nst(a, c, h, k, m, n, Z):
+def graf_nst_Nan(a, c, h, k, m, n, Z):
     x1 = [a + i*h for i in range(0, int(n/2) + 1)]
     y1 = [c + j*k for j in range(0, int(m/2) + 1)]
     x2 = [a + i*h for i in range(0, n + 1)]
@@ -50,7 +50,6 @@ def graf_nst(a, c, h, k, m, n, Z):
                 z1[i].append(Z[i][j])
         else:
             z1.append(Z[i])
-
     for i in range(int(m/2), m + 1):
         z2.append(Z[i])
     
@@ -64,4 +63,13 @@ def graf_nst(a, c, h, k, m, n, Z):
     ax.plot_surface(x2, y2, z2, rstride=1, cstride=1, cmap='inferno')
     plt.show()
 
+def graf_nst_0(a, c, h, k, m, n, Z):
+    x1 = [a + i*h for i in range(0, n + 1)]
+    y1 = [c + j*k for j in range(0, m + 1)]
 
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    x1, y1 = np.meshgrid(x1, y1)
+    z1 = array(Z)
+    ax.plot_surface(x1, y1, z1, rstride=1, cstride=1, cmap='inferno')
+    plt.show()

@@ -5,6 +5,7 @@ import methods as mth
 import pandas as pd
 a, b, c, d = -1, 1, -1, 1 
 
+#================================================================================#
 def u(x, y):
     return exp(1 - x**2 - y**2)
 
@@ -74,14 +75,13 @@ def functional_test(n, m):
             R[i].append(0)
             Z[i].append(0)
             U[i][j] = u(xi[j], yj[i])
-
+    
     for i in range(0, m + 1):
         V[i][0] = u(a, yj[i])
         V[i][n] = u(b, yj[i])
     for j in range(0, n + 1):
         V[0][j] = u(xi[j], c)
         V[m][j] = u(xi[j], d)
-    
     return U, V, R, Z, xi, yj
 
 def functional_main(n, m):
@@ -158,7 +158,6 @@ def data_main(V1, V2, Z):
     data.to_csv("data_v2_main.csv", index=False)
     data = pd.DataFrame(Z)
     data.to_csv("data_z_main.csv", index=False)
-
 
 #================================================================================#
 def test_task(n, m, eps, Nmax, omg, cheb, part):
@@ -314,12 +313,3 @@ def main_task(n, m, eps, Nmax, omg, cheb, part):
         print('')
         print('Максимальная разность решений: ', max_Z, 'В точке: ',  [round(xi1[err_i], 5), round(yj1[err_j], 5)])
         print('---------------------------------------------------------------------------------------------------')
-
-
-
-
-
-
-
-
-

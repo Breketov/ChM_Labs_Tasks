@@ -54,4 +54,3 @@ if __name__ == "__main__":
         test_task(n, m, eps, Nmax, omg, cheb, part)
     elif task == 1:
         main_task(n, m, eps, Nmax, omg, cheb, part)
-

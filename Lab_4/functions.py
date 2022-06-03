@@ -189,6 +189,13 @@ def test_task(n, m, eps, Nmax, omg, cheb, part):
         graf_std(xi, yj, U, 'Истинное решение')
         graf_std(xi, yj, V, 'Численное решение')
         graf_std(xi, yj, Z, 'Погрешность')
+        
+        nev_euklid = 0
+        for i in range(0, m + 1):
+            for j in range(0, n + 1):
+                nev_euklid += R[i][j]**2
+
+        print('Невязка евклидова ', np.sqrt(nev_euklid))
 
         data_test(U, V, Z)
 

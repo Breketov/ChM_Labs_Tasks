@@ -1,5 +1,5 @@
 import numpy as np
-from numpy import exp, sin, cos, sqrt, pi, array, max, abs
+from numpy import exp, sin, cos, pi, array, abs
 import matplotlib.pyplot as plt
 import methods as mth
 import pandas as pd
@@ -35,6 +35,9 @@ def tau(S, k, lam1, lamn):
 
 #================================================================================#
 def graf_std(x, y, z, name):
+    """
+    Функция отрисовки графиков для стандартной области
+    """
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     x, y = np.meshgrid(x, y)
@@ -44,6 +47,9 @@ def graf_std(x, y, z, name):
     plt.show()
 
 def graf_nst(a, c, h, k, m, n, Z, name):
+    """
+    Функция отрисовки графиков для нестандартной области
+    """
     x1 = [a + i*h for i in range(0, n + 1)]
     y1 = [c + j*k for j in range(0, m + 1)]
 
@@ -57,6 +63,11 @@ def graf_nst(a, c, h, k, m, n, Z, name):
 
 #================================================================================#
 def functional_test(n, m):
+    """
+    Функция для создания и заполнения массивов истинного и численного решений, невязок и погрешностей для тестовой задачи
+
+    Возвращает эти массивы и сетку по x и y
+    """
     U, V, R, Z = [], [], [], []
 
     h = (b - a)/n
@@ -85,6 +96,11 @@ def functional_test(n, m):
     return U, V, R, Z, xi, yj
 
 def functional_main(n, m):
+    """
+    Функция для создания и заполнения массивов численного решения, невязок и погрешностей для основной задачи
+
+    Возвращает эти массивы и сетку по x и y
+    """
     V, R, Z = [], [], []
 
     h = (b - a)/n
@@ -119,6 +135,11 @@ def functional_main(n, m):
 
 #================================================================================#
 def error_test(n, m, U, V, R, Z):
+    """
+    Функция подсчета погрешности на шаге S и подсчет невязки нормы Чебышева для тестовой задачи
+
+    Возвращает норму невязки и точку с максимальной ошибкой
+    """
     max_Z = 0
     for i in range(0, m + 1):
         for j in range(0, n + 1):
@@ -132,6 +153,11 @@ def error_test(n, m, U, V, R, Z):
     return [max_Z, err_i, err_j], nevN
 
 def error_main(n, m, V1, V2, Z):
+    """
+    Функция подсчета погрешности на шаге S для основной задачи
+
+    Возвращает точку с максимальной ошибкой
+    """
     max_Z = 0
     for i in range(0, m + 1):
         for j in range(0, n + 1):
@@ -144,6 +170,9 @@ def error_main(n, m, V1, V2, Z):
 
 #================================================================================#
 def data_test(U, V, Z):
+    """
+    Функция создания таблиц для тестовой задачи
+    """
     data = pd.DataFrame(U)
     data.to_csv("data_u_test.csv", index=False)
     data = pd.DataFrame(V)
@@ -152,6 +181,9 @@ def data_test(U, V, Z):
     data.to_csv("data_z_test.csv", index=False)
 
 def data_main(V1, V2, Z):
+    """
+    Функция создания таблиц для основной задачи
+    """
     data = pd.DataFrame(V1)
     data.to_csv("data_v1_main.csv", index=False)
     data = pd.DataFrame(V2)
@@ -161,6 +193,9 @@ def data_main(V1, V2, Z):
 
 #================================================================================#
 def test_task(n, m, eps, Nmax, omg, cheb, part):
+    """
+    Функция вызывающая запуск и вывод тестовой задачи для всех методов
+    """
     if part == 1:
         U, V, R, Z, xi, yj = functional_test(n, m)
         V, R, [eps_max, S, nev0] = mth.MVR(n, m, eps, Nmax, omg, V, R, 0)
@@ -189,13 +224,6 @@ def test_task(n, m, eps, Nmax, omg, cheb, part):
         graf_std(xi, yj, U, 'Истинное решение')
         graf_std(xi, yj, V, 'Численное решение')
         graf_std(xi, yj, Z, 'Погрешность')
-        
-        nev_euklid = 0
-        for i in range(0, m + 1):
-            for j in range(0, n + 1):
-                nev_euklid += R[i][j]**2
-
-        print('Невязка евклидова ', np.sqrt(nev_euklid))
 
         data_test(U, V, Z)
 
@@ -232,6 +260,9 @@ def test_task(n, m, eps, Nmax, omg, cheb, part):
         mth.MPI_non_standart(n, m, eps, Nmax)
 
 def main_task(n, m, eps, Nmax, omg, cheb, part):
+    """
+    Функция вызывающая запуск и вывод основной задачи для всех методов
+    """
     if part == 1:
         V, R, Z, [xi1, yj1] = functional_main(n, m)
         V1, R1, [eps_max1, S1, nev01] = mth.MVR(n, m, eps, Nmax, omg[0], V, R, 1)
